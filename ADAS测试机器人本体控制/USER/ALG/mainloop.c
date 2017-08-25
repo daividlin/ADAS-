@@ -12,15 +12,10 @@ ROBOTERRORTYPE error;
 
 unsigned int cnt_10mstimer;
 unsigned int cnt_5mstimer;
-float tgheading;
 extern double global_x, global_y;
 CURVEPLAN lineplan;
 extern float fittingR;
-float sign_omg;
 extern float adjustr;
-void OnButtonFansuan(double x, double y, double *B, double *L);
-unsigned char up;
-double wgsx, wgsy;
 
 void mainTask(void *pvPara)
 {
@@ -171,7 +166,6 @@ void debugUsartSendTask(void *pvPara)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		robot_motion.flag_timer_200ms = 0;
-		tgheading = atan2(lineplan.y - robot_motion.y, lineplan.x - robot_motion.x);
 		memset(uart2cmdboard.tdata, 0, sizeof(uart2cmdboard.tdata));
 		sprintf(uart2cmdboard.tdata, "%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%d,%.3f,%.3f,%d,%.3f\r\n", lineplan.x, lineplan.y, robot_motion.x, robot_motion.y, \
 			lineplan.v, robot_motion.v, fittingR, control.offsetx, lineplan.heading, robot_motion.heading * 180 / PI, lineplan.type, control.target_omg, control.decel_stage, GPS_Information.Qual, control.target_v);

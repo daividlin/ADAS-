@@ -437,7 +437,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>37</ColumnNumber>
+      <ColumnNumber>40</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>1</TopLine>
       <CurrentLine>12</CurrentLine>
@@ -661,9 +661,9 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>35</ColumnNumber>
+      <ColumnNumber>38</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>10</TopLine>
+      <TopLine>7</TopLine>
       <CurrentLine>13</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\MPU6050\mpu6050.c</PathWithFileName>
@@ -925,9 +925,9 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>9</ColumnNumber>
+      <ColumnNumber>12</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>17</TopLine>
+      <TopLine>22</TopLine>
       <CurrentLine>33</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\ALG\mainloop.c</PathWithFileName>

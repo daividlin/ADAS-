@@ -16,7 +16,7 @@ void peripheralsTimersInit(void)
 
 void peripheralsUARTInit()
 {
-	uart1_init(84, 115200);		//初始化串口波特率为115200 
+	uart1_init(84, 115200);	
 	uart2_init(42, 115200);
 	uart3_init(42, 115200);
 	uart4_init(42, 115200);

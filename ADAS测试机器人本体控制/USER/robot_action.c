@@ -20,7 +20,7 @@ float movespd = 0, turnomg = 0;
 ROBOTGYRO gyro;
 extern CURVEPLAN lineplan;
 float fittingR;
-extern float sign_omg;
+extern float signOMG;
 float tomg;
 float adjustr;
 int initial_data(void)
@@ -62,7 +62,7 @@ int error_process(ROBOTERRORTYPE error)
 	if (error.level == 1)
 	{
 		send_cmd_motordrive(MOTORDRIVE_ID_LEFT, MOTORDRIVE_CMD_DISABLE, 0, 0);
-        vTaskDelay(5);
+		vTaskDelay(5);
 		send_cmd_motordrive(MOTORDRIVE_ID_LEFT, MOTORDRIVE_CMD_DISABLE, 0, 0);
 	}
 	return 0;
@@ -378,12 +378,10 @@ void parase_cmd_moving1(void)
 int action_moving1(void)
 {
 	double targetheading;//nowheading;
-
 	double omg, r_robot;
 	double pvalue_heading = 0, ivalue_heading = 0;
 	static double x0, y0, x1, y1, x2, y2, xc, yc;
 	static float int_r_offset = 0;
-
 	double offset_p, offset_i, offset_r, adjust_r;//
 	double pvalue_offset = 0, ivalue_offset = 0;
 	double offsety, offset_heading;
@@ -391,15 +389,12 @@ int action_moving1(void)
 	double targetomg_offsetheading, targetomg_offsety;
 	static int lineplan_type_old;
 	static double ki_offsetx_value;
-
 	double headAtanLastTime = 0.0, headAtanCurTime = 0.0, deltas, k0, k1;
 	double r;
 	unsigned char newdata;
-
 	offset_p = 0.5;//0.5
 	offset_i = 0.001;
 	/////注意int_r_offset清空
-
 	if (lineplan.flag_new_cmdframe_old == 0 && lineplan.flag_new_cmdframe == 1)
 	{
 		ki_offset_value = 0;
@@ -544,7 +539,7 @@ int action_moving1(void)
 		error.table[ERROR_INDEX_OFFSET] = 1;
 		error.level = 1;
 	}
-//	de_offsety = offsety;
+	//	de_offsety = offsety;
 	ki_offset_value += offsety;
 	pvalue_offset = sign(robot_motion.v)*MOVE_OFFSET_P * offsety;
 	ivalue_offset = sign(robot_motion.v)*MOVE_OFFSET_I * ki_offset_value;
@@ -570,21 +565,15 @@ int action_moving1(void)
 		if (fabs(offset_r) < 0.0001) { int_r_offset = 0; }
 		else { int_r_offset += offset_r; }
 		adjust_r = offset_p*offset_r + offset_i*int_r_offset;
-
 		adjustr = r_robot;
 		r += adjust_r;
-
 		if (fabs(r) > 0.5)
 		{
 			omg = omg + control.target_v / r;
 		}
 		else { omg = 0; }
 	}
-
-	//		fittingR = r;
-
 	control.target_omg = omg;
-
 	if (lineplan.v == 0)
 	{
 		control.target_v = 0;
@@ -599,35 +588,24 @@ int action_moving1(void)
 	}
 }
 
-
-
 int action_moving(void)
 {
 	double targetx, targety, targetheading, nowx, nowy;
-
 	targetx = control.target_x;
 	targety = control.target_y;
-
 	targetheading = control.target_heading;
-
 	nowx = robot_motion.x;
 	nowy = robot_motion.y;
-
 	control.offsetx = targetx*cos(-targetheading) - targety*sin(-targetheading) + nowy*sin(-targetheading) - nowx*cos(-targetheading);
 	control.offsety = targetx*sin(-targetheading) + targety*cos(-targetheading) - nowy*cos(-targetheading) - nowx*sin(-targetheading);
-
-	//    control.max_v = 0.3;
-	//	  control.max_v = movespd;
 	control.min_v = 0.007;
 	control.max_acc = 0.5;
 	control.tol_offsetx = 0.05;
 	control.decel_dis = control.target_v * control.target_v / 2.0 / control.max_acc + 0.12;
-
 	if (control.decel_dis >= fabs(control.offsetx) && control.decel_stage == 0)
 	{
 		control.decel_stage = 1;
 	}
-
 	if (control.decel_stage == 0)
 	{
 		control.target_v = fabs(control.target_v) + TIMER_PERIOD*control.max_acc;
@@ -646,7 +624,6 @@ int action_moving(void)
 		control.target_v = sign(control.offsetx)*control.min_v*2.5;
 		control.offsety = 0;
 	}
-
 	if (control.decel_stage == 1 && fabs(control.target_v) <= control.min_v)
 	{
 		if (fabs(control.offsetx) < control.tol_offsetx)
@@ -661,7 +638,6 @@ int action_moving(void)
 //		    control.target_heading = atan2(targety - robot_motion.y, targetx - robot_motion.x);
 //        control.target_heading = robot_motion.heading + getanglediff(control.target_heading,robot_motion.heading);
 //		}
-
 	getcmdomg(control.target_heading, robot_motion.heading);
 
 	if (fabs(control.offsetx) > control.tol_offsetx)
@@ -681,14 +657,11 @@ void getcmdomg(double targetheading, double nowheading)
 	double pvalue_offset = 0, ivalue_offset = 0, dvalue_offset = 0;
 	double pvalue_heading = 0, ivalue_heading = 0, dvalue_heading = 0;
 	double d_heading = 0, d_offset = 0;
-
 	control.ki_offset_value += control.offsety;
 	d_offset = control.offsety - control.pre_offsety;
-
 	pvalue_offset = sign(robot_motion.v)*MOVE_OFFSET_P * control.offsety;
 	ivalue_offset = sign(robot_motion.v)*MOVE_OFFSET_I * control.ki_offset_value;
 	dvalue_offset = sign(robot_motion.v)*MOVE_OFFSET_D * d_offset;
-
 	control.targetomg_offsety = pvalue_offset + ivalue_offset + dvalue_offset;
 	//gps信号不可用时，不对位置偏差作矫正。
 	if (gps.flag_confidence == 0)
@@ -697,7 +670,6 @@ void getcmdomg(double targetheading, double nowheading)
 	}
 	control.cmd_heading = control.target_heading;
 	control.offset_heading = getanglediff(control.cmd_heading, robot_motion.heading);
-
 	control.ki_heading_value += control.offset_heading;
 	d_heading = control.offset_heading - control.pre_offset_heading;
 	pvalue_heading = MOVE_HEADING_P * control.offset_heading;
@@ -707,26 +679,21 @@ void getcmdomg(double targetheading, double nowheading)
 	control.target_omg = control.targetomg_offsetheading + control.targetomg_offsety;
 	control.pre_offsety = control.offsety;
 	control.pre_offset_heading = control.offset_heading;
-
 }
 
 void parase_cmd_initial_pos(void)
 {
 	gps.kalman_heading.x = robot_motion.heading;
-
 	robot_motion.x = gps.x;
 	robot_motion.y = gps.y;
 }
 
 void parase_cmd(void)
 {
-
 	if (cmd.dataarrive == 1)
 	{
 		cmd.dataarrive = 0;
 		cmd.cmdstop = 0;
-
-
 		switch (cmd.type)
 		{
 		case SUB_MOVE:
@@ -739,7 +706,7 @@ void parase_cmd(void)
 			parase_cmd_moving1();
 			break;
 		case ENABLE:
-            vTaskDelay(2);
+			vTaskDelay(2);
 			EnableMotorDrive(MOTORDRIVE_ID_LEFT);
 			vTaskDelay(2);
 			EnableMotorDrive(MOTORDRIVE_ID_RIGHT);
@@ -769,45 +736,35 @@ void parase_cmd(void)
 		case SUB_TURN:
 			parase_cmd_turning();
 			break;
-
 		case E_STOP:
 			cmd.cmdstop = 1;
-
 			control.target_omg = 0.0;//rad/s	
 			robot_motion.type = STOP;
 			break;
 		case INITIAL_POS:
 			parase_cmd_initial_pos();
 			break;
-
 		case MOVE_S:
 			robot_motion.type = MOVE_S;
 			//					   control.target_v = 1;//m/s
 			//		         control.target_omg = 0.0;//rad/s
 			movespd = cmd.target_heading *180.0f / PI;
 			break;
-
-
 		case MOVE_BACK:
 			robot_motion.type = MOVE_BACK;
 			//					   control.target_v = 1;//m/s
 			//		         control.target_omg = 0.0;//rad/s
 			movespd = cmd.target_heading *180.0f / PI;
-
 			break;
 		case TURN_LEFT:
 			robot_motion.type = TURN_LEFT;
-			//					    control.target_v = 0.0;//m/s
 			control.target_omg = cmd.target_heading *180.0f / PI;//rad/s
-
 			break;
 		case TURN_RIGHT:
 			robot_motion.type = TURN_RIGHT;
 			//					    control.target_v = 0.0;//m/s
 			control.target_omg = -cmd.target_heading *180.0f / PI;//rad/s
-
 			break;
-
 		default:
 			break;
 		}
@@ -911,7 +868,7 @@ void parase_pos(void)
 		lineplan.y = robot_motion.y;
 		lineplan.heading = robot_motion.heading;
 
-	}
+}
 	flag_zerobias_old = gyro.flag_zerobias;
 
 
