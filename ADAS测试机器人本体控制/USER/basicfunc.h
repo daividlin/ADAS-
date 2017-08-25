@@ -21,22 +21,22 @@ int signH(float v);
 u32 GetMedianNum1(u32 * bArray, int iFilterLen); 
 float GetMedianNum(float *array,unsigned char length);
 int get_weigtedMean(WEIGTEDMEAN *weigtedmean_interface);
-double sign(double indata);
-double wrapTo2PiDe(double inrad);
-double wrapToPiDe(double inrad);
+double getSign(double indata);
+double angle2FullRadian(double inrad);
+double angle2HalfRadian(double inrad);
 
-double getanglediff(double target, double now);
+double getAngleDiff(double target, double now);
 
    
 double wrapToHalfPiDe(double inrad);
 
 int GetNominalHeading(double in, double* out);
 
-void clear_buff(double a[],int num);
+void clearBufByLen(double a[],int num);
 
 int kalman(KALMAN *kalman_interface);
 
-float get_rms(double a[],int num,double predict);
+float getMeanVariance(double a[],int num,double predict);
 float get_var(double a[],int num);
 
 int fuzzy_pid(double *p,double pid[],double boundary[],double offset,int num);

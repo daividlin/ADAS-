@@ -11,7 +11,7 @@
 #include "..\HARDWARE\GPS\gps.h"
 
 #include "..\HARDWARE\DCM250B\dcm250b.h"
-ROBOTUART pc2stm_uart;
+ROBOTUART PC2STUsart;
 
 ////////////////////////////////////////////////////////////////////////////////// 	 
 //如果使用ucos,则包括下面的头文件即可.
@@ -522,7 +522,7 @@ void USART3_IRQHandler(void)
 	{
 		res = USART3->DR;
 
-		if (pc2stm_uart.olddata == 0xaa && res == 0x55)
+		if (PC2STUsart.olddata == 0xaa && res == 0x55)
 		{
 			usart1_rdata[0] = 0xaa;
 			usart1_rdata[1] = res;
@@ -540,19 +540,19 @@ void USART3_IRQHandler(void)
 			if (usart1_ok == 0)
 			{
 				usart1_rdata[usart1_rlen] = res;
-				pc2stm_uart.rdata[usart1_rlen] = usart1_rdata[usart1_rlen];
+				PC2STUsart.rdata[usart1_rlen] = usart1_rdata[usart1_rlen];
 				usart1_rlen++;
 				if (usart1_rlen >= 18)
 				{
 
 					if (usart1_rdata[17] == 0xbb)
 					{
-						pc2stm_uart.dataarrive = 1;
+						PC2STUsart.dataarrive = 1;
 					}
 				}
 			}
 		}
-		pc2stm_uart.olddata = res;
+		PC2STUsart.olddata = res;
 	}
 }
 
@@ -567,11 +567,11 @@ void SendLogData(void)
 	logStrc.len = 31;
 	logStrc.id = 0xAB;
 	logStrc.type = 0xFE;
-	logStrc.gyroSt = (char)(gyro.flag_zerobias);    //陀螺状态
+	logStrc.gyroSt = (char)(gyro.zero_bias_flag);    //陀螺状态
 	logStrc.gpsSt = (char)gps.flag_confidence;     //GPS状态
 	logStrc.posX = (int)(robot_motion.x*1000.0);     //位置x
 	logStrc.posY = (int)(robot_motion.y*1000.0);
-	logStrc.posAngle = (int)(wrapToPiDe(robot_motion.heading)*1800.0 / PI);
+	logStrc.posAngle = (int)(angle2HalfRadian(robot_motion.heading)*1800.0 / PI);
 	logStrc.gpsQual = (char)(GPS_Information.Qual);
 	logStrc.gpsX = (int)(gps.x*1000.0);
 	logStrc.gpsY = (int)(gps.y*1000.0);

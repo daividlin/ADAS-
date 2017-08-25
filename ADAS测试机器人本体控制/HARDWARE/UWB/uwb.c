@@ -53,7 +53,7 @@ int parase_uwb(void)
 			      }
             else
             {
-						   clear_buff(uwb.x_buff_100ms,uwb.xy_buff_num); 
+						   clearBufByLen(uwb.x_buff_100ms,uwb.xy_buff_num); 
 						}							
 					  if(fabs(uwb.x_v) < 5)
 						{
@@ -66,7 +66,7 @@ int parase_uwb(void)
 						}
 						else
 						{
-						    clear_buff(uwb.y_buff_100ms,uwb.xy_buff_num);
+						    clearBufByLen(uwb.y_buff_100ms,uwb.xy_buff_num);
 						}	
 				}
 //				for(i=1;i<uwb.xy_buff_num;i++)
@@ -160,8 +160,8 @@ void uwb_correct_kalman(void)
 					  predict_y = robot_motion.y + robot_motion.v * TIMER_PERIOD * sin(robot_motion.heading );
 					
 	        //求uwb数据均方差  
-					  uwb.rms_x = (double)(get_rms(uwb.x_buff_100ms,uwb.xy_buff_num,predict_x));
-					  uwb.rms_y = (double)(get_rms(uwb.y_buff_100ms,uwb.xy_buff_num,predict_y));
+					  uwb.rms_x = (double)(getMeanVariance(uwb.x_buff_100ms,uwb.xy_buff_num,predict_x));
+					  uwb.rms_y = (double)(getMeanVariance(uwb.y_buff_100ms,uwb.xy_buff_num,predict_y));
 					  //剔除异常数据 ,serios
 					  if((fabs(predict_x-uwb.raw_x) < 1.0)&&(fabs(predict_y-uwb.raw_y) < 1.0))
 					  {						    
@@ -301,7 +301,7 @@ void uwb_correct_kalman(void)
             if(uwb.now_heading_var < uwb.heading_var_tol)
             {                   			      
 					  		uwb.getheading_cnt ++;
-								robot_motion.heading = robot_motion.heading + getanglediff(uwb.now_heading,robot_motion.heading)*0.05;     
+								robot_motion.heading = robot_motion.heading + getAngleDiff(uwb.now_heading,robot_motion.heading)*0.05;     
             }		            	
 	      }			
 		}
@@ -350,8 +350,8 @@ void uwb_correct(void)
 					  uwb.raw_x_var = (double)(get_var(uwb.x_buff_100ms,uwb.xy_buff_num));
 				    uwb.raw_y_var = (double)(get_var(uwb.y_buff_100ms,uwb.xy_buff_num));
 	        //求uwb数据均方差  
-					  uwb.rms_x = (double)(get_rms(uwb.x_buff_100ms,uwb.xy_buff_num,predict_x));
-					  uwb.rms_y = (double)(get_rms(uwb.y_buff_100ms,uwb.xy_buff_num,predict_y));
+					  uwb.rms_x = (double)(getMeanVariance(uwb.x_buff_100ms,uwb.xy_buff_num,predict_x));
+					  uwb.rms_y = (double)(getMeanVariance(uwb.y_buff_100ms,uwb.xy_buff_num,predict_y));
 					  //剔除异常数据 ,serios
 					  if((fabs(predict_x-uwb.raw_x) < 1.0)&&(fabs(predict_y-uwb.raw_y) < 1.0))
 					  {						    
@@ -476,7 +476,7 @@ void uwb_correct(void)
             if(uwb.now_heading_var < uwb.heading_var_tol)
             {                   			      
 					  		uwb.getheading_cnt ++;
-								robot_motion.heading = robot_motion.heading + getanglediff(uwb.now_heading,robot_motion.heading)*0.05;     
+								robot_motion.heading = robot_motion.heading + getAngleDiff(uwb.now_heading,robot_motion.heading)*0.05;     
             }		            	
 	      }			
 		}

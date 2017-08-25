@@ -106,7 +106,7 @@ unsigned char send_cmd_motordrive(unsigned char addr, unsigned char cmd_id, unsi
 函数功能：获取电机转速rpm
 参数    ：id  设备节点
 */
-unsigned char ZDGetMotorSpd(unsigned char addr)//spd:rpm
+unsigned char getMotorSpeed_ZD(unsigned char addr)//spd:rpm
 {
 	unsigned char buff[8];
 	unsigned short check;
@@ -152,7 +152,7 @@ unsigned char EnableMotorDrive(unsigned char addr)//spd:rpm
 参数    ：speedLeft  左轮速度值
 					speedRight 右轮速度值
 */
-unsigned char MoveWheelSpdSet(int speedLeft, int speedRight)
+unsigned char wheelMotorSpdSet(int speedLeft, int speedRight)
 {
 	delay_us(100);
 	ZDSetMotorSpd(MOTORDRIVE_ID_LEFT, speedLeft);
@@ -167,12 +167,12 @@ unsigned char MoveWheelSpdSet(int speedLeft, int speedRight)
 函数功能：获取左右轮速度
 参数    ：无
 */
-unsigned char MoveWheelSpdGet(void)
+unsigned char getWheelMotorSpeed2Buf(void)
 {
-	ZDGetMotorSpd(MOTORDRIVE_ID_LEFT);
+	getMotorSpeed_ZD(MOTORDRIVE_ID_LEFT);
 	//	delay_ms(1);
 	delay_us(100);
-	ZDGetMotorSpd(MOTORDRIVE_ID_RIGHT);
+	getMotorSpeed_ZD(MOTORDRIVE_ID_RIGHT);
 	//	delay_ms(1);	
 	delay_us(100);
 	return 0;

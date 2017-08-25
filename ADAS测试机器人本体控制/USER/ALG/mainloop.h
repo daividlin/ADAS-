@@ -13,6 +13,7 @@
 void mainTask(void *pvPara);
 void checkBoardTask(void *pvPara);
 void checkHuaweiCmdTask(void *pvPara);
+void is3288CmdLost(void);
 void moveCtrlALGTask(void *pvPara);
 void analysisGPSTask(void *pvPara);
 void debugUsartSendTask(void *pvPara);

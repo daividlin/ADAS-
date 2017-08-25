@@ -27,7 +27,7 @@ int initial_data(void)
 {
 	int re = 0;
 	gyro.flag_static = 1;
-	gyro.flag_zerobias = 0;
+	gyro.zero_bias_flag = 0;
 	gps.flag_confidence = 1;
 	gps.kalman_x.p = 0.01;
 	gps.kalman_y.p = 0.01;
@@ -68,7 +68,7 @@ int error_process(ROBOTERRORTYPE error)
 	return 0;
 }
 
-void rd_omg_mpu6050(void)
+void rxOMGMPU6050(void)
 {
 	short gyrox, gyroy, gyroz;	//陀螺仪原始数据
 //	  if(mpu_dmp_get_data(&pitch,&roll,&yaw)==0)
@@ -84,13 +84,13 @@ void rd_omg_mpu6050(void)
 		{
 			gyro.flag_static = 0;
 		}
-		if (gyro.flag_static == 1 && gyro.flag_zerobias == 0)
+		if (gyro.flag_static == 1 && gyro.zero_bias_flag == 0)
 		{
 			gyro.omg_his_add = gyro.omg_his_add + gyro.omg_deg_raw;
 			gyro.index++;
 			if (gyro.index >= 500)
 			{
-				gyro.flag_zerobias = 1;
+				gyro.zero_bias_flag = 1;
 				gyro.index = 0;
 				gyro.omg_deg_zerobias = gyro.omg_his_add / 500.0;
 				gyro.omg_his_add = 0;
@@ -98,7 +98,7 @@ void rd_omg_mpu6050(void)
 
 		}
 		//当前值减零偏值
-		if (gyro.flag_zerobias == 1)
+		if (gyro.zero_bias_flag == 1)
 		{
 			gyro.omg_deg_correct = gyro.omg_deg_raw - gyro.omg_deg_zerobias;
 			gyro.index = 0;
@@ -131,20 +131,20 @@ void rd_omg_gyro(void)
 		{
 			gyro.flag_static = 0;
 		}
-		if (gyro.flag_static == 1 && gyro.flag_zerobias == 0)
+		if (gyro.flag_static == 1 && gyro.zero_bias_flag == 0)
 		{
 			gyro.omg_his_add = gyro.omg_his_add + gyro.omg_deg_raw;
 			gyro.index++;
 			if (gyro.index >= 1000)
 			{
-				gyro.flag_zerobias = 1;
+				gyro.zero_bias_flag = 1;
 				gyro.index = 0;
 				gyro.omg_deg_zerobias = gyro.omg_his_add / 1000.0;
 				gyro.omg_his_add = 0;
 			}
 		}
 		//当前值减零偏值
-		if (gyro.flag_zerobias == 1)
+		if (gyro.zero_bias_flag == 1)
 		{
 			gyro.omg_deg_correct = gyro.omg_deg_raw - gyro.omg_deg_zerobias;
 			gyro.index = 0;
@@ -238,21 +238,21 @@ int InitialSPIGYRO(void)
 }
 
 
-void rx_cmd(void)
+void checkRK3288Msg(void)
 {
-	CTRLCMD_STRUCT ctrlcmd;
-	if (pc2stm_uart.dataarrive == 1)
+	CTRLCMD_STRUCT_TYPE ctrl_cmd;
+	if (PC2STUsart.dataarrive == 1)
 	{
-		pc2stm_uart.dataarrive = 0;
+		PC2STUsart.dataarrive = 0;
 		cmd.dataarrive = 1;
-		memcpy(&cmd.type, &pc2stm_uart.rdata[4], 1);
-		memcpy(&ctrlcmd.targetX, &pc2stm_uart.rdata[5], 4);
-		memcpy(&ctrlcmd.targetY, &pc2stm_uart.rdata[9], 4);
-		memcpy(&ctrlcmd.targetAngle, &pc2stm_uart.rdata[13], 4);
+		memcpy(&cmd.type, &PC2STUsart.rdata[4], 1);
+		memcpy(&ctrl_cmd.targetX, &PC2STUsart.rdata[5], 4);
+		memcpy(&ctrl_cmd.targetY, &PC2STUsart.rdata[9], 4);
+		memcpy(&ctrl_cmd.targetAngle, &PC2STUsart.rdata[13], 4);
 		//			  cmd.type = ctrlcmd.type;
-		cmd.target_x = ((double)ctrlcmd.targetX)*0.001;
-		cmd.target_y = ((double)ctrlcmd.targetY)*0.001;
-		cmd.target_heading = ((double)ctrlcmd.targetAngle / 1000.0) / 180.0*PI;
+		cmd.target_x = ((double)ctrl_cmd.targetX)*0.001;
+		cmd.target_y = ((double)ctrl_cmd.targetY)*0.001;
+		cmd.target_heading = ((double)ctrl_cmd.targetAngle / 1000.0) / 180.0*PI;
 
 	}
 }
@@ -266,7 +266,7 @@ void parase_cmd_turning(void)
 	//	  cmd.target_heading = atan2(cmd.target_y - robot_motion.y, cmd.target_x - robot_motion.x);
 	task[0].target_x = cmd.target_x;
 	task[0].target_y = cmd.target_y;
-	task[0].target_heading = robot_motion.heading + getanglediff(cmd.target_heading, robot_motion.heading);
+	task[0].target_heading = robot_motion.heading + getAngleDiff(cmd.target_heading, robot_motion.heading);
 	task[0].target_max_v = 0.2;
 	task[0].target_max_omg = 0.2;
 }
@@ -274,24 +274,14 @@ int action_turning(void)
 {
 	double targetheading;
 	double heading;
-
-
 	heading = robot_motion.heading;
 	targetheading = control.target_heading;
-
-	control.offset_heading = wrapToPiDe(targetheading - heading);
-
-	//    control.max_omg = 0.3;
+	control.offset_heading = angle2HalfRadian(targetheading - heading);
 	control.min_omg = 0.007;
 	control.max_angacc = 0.2;
 	control.tol_ang = PI / 180.0;
 	control.compesate_ang = 2 * PI / 180.0;
-
-
-	///////////////////////////////////////////////////////////////////////////////////
-
 	control.decel_ang = control.target_omg * control.target_omg / 2.0 / control.max_angacc + control.compesate_ang;
-
 	if (control.decel_ang >= fabs(control.offset_heading) && control.decel_stage == 0)
 	{
 		control.decel_stage = 1;
@@ -300,19 +290,19 @@ int action_turning(void)
 	if (control.decel_stage == 0)
 	{
 		control.target_omg = fabs(control.target_omg) + TIMER_PERIOD * control.max_angacc;
-		control.target_omg = sign(control.offset_heading)*control.target_omg;
+		control.target_omg = getSign(control.offset_heading)*control.target_omg;
 		if (fabs(control.target_omg) > control.max_omg)
 		{
-			control.target_omg = sign(control.offset_heading)*control.max_omg;
+			control.target_omg = getSign(control.offset_heading)*control.max_omg;
 		}
 	}
 	else if (control.decel_stage == 1)
 	{
-		control.target_omg = control.target_omg - sign(control.target_omg)*TIMER_PERIOD*control.max_angacc;
+		control.target_omg = control.target_omg - getSign(control.target_omg)*TIMER_PERIOD*control.max_angacc;
 	}
 	else if (control.decel_stage == 2)
 	{
-		control.target_omg = sign(control.offset_heading)*control.min_omg*2.5;
+		control.target_omg = getSign(control.offset_heading)*control.min_omg*2.5;
 
 	}
 
@@ -341,21 +331,19 @@ void parase_cmd_moving(void)
 {
 	double target_heading;
 	target_heading = atan2(cmd.target_y - robot_motion.y, cmd.target_x - robot_motion.x);
-
 	task[0].type = SUB_TURN;
 	task[0].status = TASK_READY;
 	task[0].target_x = cmd.target_x;
 	task[0].target_y = cmd.target_y;
-	task[0].target_heading = robot_motion.heading + getanglediff(target_heading, robot_motion.heading);
+	task[0].target_heading = robot_motion.heading + getAngleDiff(target_heading, robot_motion.heading);
 	task[0].target_max_v = 0.2;
 	task[0].target_max_v = cmd.target_heading * 180 / PI;
 	task[0].target_max_omg = 0.2;
-
 	task[1].type = SUB_MOVE;
 	task[1].status = TASK_READY;
 	task[1].target_x = cmd.target_x;
 	task[1].target_y = cmd.target_y;
-	task[1].target_heading = robot_motion.heading + getanglediff(target_heading, robot_motion.heading);
+	task[1].target_heading = robot_motion.heading + getAngleDiff(target_heading, robot_motion.heading);
 	task[1].target_max_v = 0.2;
 	task[1].target_max_v = cmd.target_heading * 180 / PI;
 	task[1].target_max_omg = 0.5;
@@ -364,12 +352,11 @@ void parase_cmd_moving(void)
 void parase_cmd_moving1(void)
 {
 	cmd.target_heading = atan2(lineplan.y - robot_motion.y, lineplan.x - robot_motion.x);
-
 	task[0].type = SUB_TRACKING;
 	task[0].status = TASK_READY;
 	task[0].target_x = lineplan.x;
 	task[0].target_y = lineplan.y;
-	task[0].target_heading = robot_motion.heading + getanglediff(cmd.target_heading, robot_motion.heading);
+	task[0].target_heading = robot_motion.heading + getAngleDiff(cmd.target_heading, robot_motion.heading);
 	task[0].target_max_v = 0.3;
 	task[0].target_max_omg = 0.5;
 
@@ -541,11 +528,11 @@ int action_moving1(void)
 	}
 	//	de_offsety = offsety;
 	ki_offset_value += offsety;
-	pvalue_offset = sign(robot_motion.v)*MOVE_OFFSET_P * offsety;
-	ivalue_offset = sign(robot_motion.v)*MOVE_OFFSET_I * ki_offset_value;
+	pvalue_offset = getSign(robot_motion.v)*MOVE_OFFSET_P * offsety;
+	ivalue_offset = getSign(robot_motion.v)*MOVE_OFFSET_I * ki_offset_value;
 	targetomg_offsety = pvalue_offset + ivalue_offset;
 	//角度差调整
-	offset_heading = getanglediff(lineplan.heading, robot_motion.heading);
+	offset_heading = getAngleDiff(lineplan.heading, robot_motion.heading);
 	ki_heading_value += offset_heading;
 	pvalue_heading = MOVE_HEADING_P * offset_heading;
 	ivalue_heading = MOVE_HEADING_I * ki_heading_value;
@@ -560,7 +547,7 @@ int action_moving1(void)
 
 	if (lineplan.type == LINE_TYPE_CURVE)
 	{
-		r_robot = sign((headAtanCurTime - headAtanLastTime))*sqrt((robot_motion.x - xc)*(robot_motion.x - xc) + (robot_motion.y - yc)*(robot_motion.y - yc));
+		r_robot = getSign((headAtanCurTime - headAtanLastTime))*sqrt((robot_motion.x - xc)*(robot_motion.x - xc) + (robot_motion.y - yc)*(robot_motion.y - yc));
 		offset_r = r - r_robot;
 		if (fabs(offset_r) < 0.0001) { int_r_offset = 0; }
 		else { int_r_offset += offset_r; }
@@ -609,19 +596,19 @@ int action_moving(void)
 	if (control.decel_stage == 0)
 	{
 		control.target_v = fabs(control.target_v) + TIMER_PERIOD*control.max_acc;
-		control.target_v = sign(control.offsetx)*control.target_v;
+		control.target_v = getSign(control.offsetx)*control.target_v;
 		if (fabs(control.target_v) > control.max_v)
 		{
-			control.target_v = sign(control.offsetx)*control.max_v;
+			control.target_v = getSign(control.offsetx)*control.max_v;
 		}
 	}
 	else if (control.decel_stage == 1)
 	{
-		control.target_v = control.target_v - sign(control.target_v)*TIMER_PERIOD*control.max_acc;
+		control.target_v = control.target_v - getSign(control.target_v)*TIMER_PERIOD*control.max_acc;
 	}
 	else if (control.decel_stage == 2)
 	{
-		control.target_v = sign(control.offsetx)*control.min_v*2.5;
+		control.target_v = getSign(control.offsetx)*control.min_v*2.5;
 		control.offsety = 0;
 	}
 	if (control.decel_stage == 1 && fabs(control.target_v) <= control.min_v)
@@ -659,9 +646,9 @@ void getcmdomg(double targetheading, double nowheading)
 	double d_heading = 0, d_offset = 0;
 	control.ki_offset_value += control.offsety;
 	d_offset = control.offsety - control.pre_offsety;
-	pvalue_offset = sign(robot_motion.v)*MOVE_OFFSET_P * control.offsety;
-	ivalue_offset = sign(robot_motion.v)*MOVE_OFFSET_I * control.ki_offset_value;
-	dvalue_offset = sign(robot_motion.v)*MOVE_OFFSET_D * d_offset;
+	pvalue_offset = getSign(robot_motion.v)*MOVE_OFFSET_P * control.offsety;
+	ivalue_offset = getSign(robot_motion.v)*MOVE_OFFSET_I * control.ki_offset_value;
+	dvalue_offset = getSign(robot_motion.v)*MOVE_OFFSET_D * d_offset;
 	control.targetomg_offsety = pvalue_offset + ivalue_offset + dvalue_offset;
 	//gps信号不可用时，不对位置偏差作矫正。
 	if (gps.flag_confidence == 0)
@@ -669,7 +656,7 @@ void getcmdomg(double targetheading, double nowheading)
 		control.targetomg_offsety = 0;
 	}
 	control.cmd_heading = control.target_heading;
-	control.offset_heading = getanglediff(control.cmd_heading, robot_motion.heading);
+	control.offset_heading = getAngleDiff(control.cmd_heading, robot_motion.heading);
 	control.ki_heading_value += control.offset_heading;
 	d_heading = control.offset_heading - control.pre_offset_heading;
 	pvalue_heading = MOVE_HEADING_P * control.offset_heading;
@@ -688,7 +675,7 @@ void parase_cmd_initial_pos(void)
 	robot_motion.y = gps.y;
 }
 
-void parase_cmd(void)
+void parseRK3288CMD(void)
 {
 	if (cmd.dataarrive == 1)
 	{
@@ -771,20 +758,17 @@ void parase_cmd(void)
 	}
 }
 
-void action_cmd(void)
+void excuteRK3288CMD(void)
 {
 	int i;
-	int getjob = 0;
-
+	int get_job = 0;
 	for (i = 0; i < 2; i++)
 	{
 		if (task[i].status == TASK_DOING)
 		{
-			getjob = 1;
-
+			get_job = 1;
 			break;
 		}
-
 		if (task[i].status == TASK_READY)
 		{
 			tasktype.cur_num = i;
@@ -795,11 +779,11 @@ void action_cmd(void)
 			control.max_v = task[i].target_max_v;
 			control.max_omg = task[i].target_max_omg;
 			control.decel_stage = 0;
-			getjob = 1;
+			get_job = 1;
 			break;
 		}
 	}
-	if (getjob == 1 && cmd.cmdstop == 0)
+	if (get_job == 1 && cmd.cmdstop == 0)
 	{
 		robot_motion.status = MOTION_DOING;
 	}
@@ -828,60 +812,44 @@ void action_cmd(void)
 
 }
 
-void parase_pos(void)
+void parsePosition(void)
 {
 	double heading;
-	static int flag_zerobias_old;
-	MoveWheelSpdGet();
-	/////////////////////////////////////read motor/////////////////////////////////////////////
-//		gHalData.WheelHal[0].FbVel = -(double)(*((int*)&(gHalData.WheelHal[0].ObDict[ACTUALVEL].Value[0])));	
-//		gHalData.WheelHal[1].FbVel = (double)(*((int*)&(gHalData.WheelHal[1].ObDict[ACTUALVEL].Value[0])));	 
-
-//		gHalData.WheelHal[0].FbVel = -gHalData.WheelHal[0].FbVel;
-
+	static int zero_bias_last_flag;
+	getWheelMotorSpeed2Buf();
 #ifdef ROBOT1
-	gHalData.WheelHal[0].WheelVel = ((double)gHalData.WheelHal[0].FbVel) / WHEEL_REDUCE_RATIO*PI / 60.0*WHEEL_DIA;
-	gHalData.WheelHal[1].WheelVel = -((double)gHalData.WheelHal[1].FbVel) / WHEEL_REDUCE_RATIO*PI / 60.0*WHEEL_DIA;
+	gHalData.WheelHal[0].WheelVel = ((double)gHalData.WheelHal[0].FbVel) / _WHEEL_REDUCE_RATIO*PI / 60.0*WHEEL_DIA;
+	gHalData.WheelHal[1].WheelVel = -((double)gHalData.WheelHal[1].FbVel) / _WHEEL_REDUCE_RATIO*PI / 60.0*WHEEL_DIA;
 	robot_motion.v = (gHalData.WheelHal[0].WheelVel + gHalData.WheelHal[1].WheelVel)*0.5;
 	robot_motion.omg_motor = (gHalData.WheelHal[1].WheelVel - gHalData.WheelHal[0].WheelVel) / WHEEL_DIS;
 #endif
-
 #ifdef ROBOT2
-	gHalData.WheelHal[0].WheelVel = -((double)gHalData.WheelHal[0].FbVel) / WHEEL_REDUCE_RATIO*PI / 60.0*WHEEL_DIA;
-	gHalData.WheelHal[1].WheelVel = ((double)gHalData.WheelHal[1].FbVel) / WHEEL_REDUCE_RATIO*PI / 60.0*WHEEL_DIA;
+	gHalData.WheelHal[0].WheelVel = -((double)gHalData.WheelHal[0].FbVel) / _WHEEL_REDUCE_RATIO*PI / 60.0*WHEEL_DIA;
+	gHalData.WheelHal[1].WheelVel = ((double)gHalData.WheelHal[1].FbVel) / _WHEEL_REDUCE_RATIO*PI / 60.0*WHEEL_DIA;
 	robot_motion.v = (gHalData.WheelHal[0].WheelVel + gHalData.WheelHal[1].WheelVel)*0.5;
 	robot_motion.omg_motor = (gHalData.WheelHal[0].WheelVel - gHalData.WheelHal[1].WheelVel) / WHEEL_DIS;
 #endif
-
 	robot_motion.omg_gyro = GYRO_DIR*gyro.omg_deg_correct*PI / 180.0;
-
-	if (flag_zerobias_old == 0 && gyro.flag_zerobias == 1)
+	if (zero_bias_last_flag == 0 && gyro.zero_bias_flag == 1)
 	{
-
 		robot_motion.heading = gps.heading;
 		robot_motion.omg_heading = gps.heading;
-		//			
 		robot_motion.x = (float)gps.x;
 		robot_motion.y = (float)gps.y;
-		//////////simulate follow curve////////////////////////
 		lineplan.x = robot_motion.x;
 		lineplan.y = robot_motion.y;
 		lineplan.heading = robot_motion.heading;
-
-}
-	flag_zerobias_old = gyro.flag_zerobias;
-
-
+	}
+	zero_bias_last_flag = gyro.zero_bias_flag;
 	////////////////////////////////////////check motion status/////////////////////////////////////////////////////////////
-	if (gHalData.WheelHal[0].ObDict[ACTUALVEL].Value[0] == 0 && gHalData.WheelHal[1].ObDict[ACTUALVEL].Value[0] == 0
-		&& gHalData.WheelHal[0].CmdMotorvel == 0 && gHalData.WheelHal[1].CmdMotorvel == 0
+	if (gHalData.WheelHal[0].ObDict[ACTUALVEL].Value[0] == 0 && gHalData.WheelHal[1].ObDict[ACTUALVEL].Value[0] == 0\
+		&& gHalData.WheelHal[0].CmdMotorvel == 0 && gHalData.WheelHal[1].CmdMotorvel == 0\
 		&& robot_motion.type != STOP && robot_motion.status != MOTION_DOING)
 	{
 		robot_motion.type = STOP;
 	}
-
 	////////////////////////////////////choose omg/////////////////////////////////////////////////////
-	if (gyro.flag_zerobias == 1)
+	if (gyro.zero_bias_flag == 1)
 	{
 		robot_motion.omg = robot_motion.omg_gyro;
 	}
@@ -895,51 +863,43 @@ void parase_pos(void)
 	}
 	robot_motion.x = robot_motion.x + robot_motion.v * TIMER_PERIOD * cos(robot_motion.heading);
 	robot_motion.y = robot_motion.y + robot_motion.v * TIMER_PERIOD * sin(robot_motion.heading);
-
 	heading = robot_motion.heading + robot_motion.omg *TIMER_PERIOD;
-	robot_motion.heading = robot_motion.heading + getanglediff(heading, robot_motion.heading);
 
+	robot_motion.heading = robot_motion.heading + getAngleDiff(heading, robot_motion.heading);
 	heading = robot_motion.omg_heading + robot_motion.omg_motor *TIMER_PERIOD;
-	robot_motion.omg_heading = robot_motion.omg_heading + getanglediff(heading, robot_motion.omg_heading);
-	robot_motion.omg_heading = wrapToPiDe(robot_motion.omg_heading);
-
+	robot_motion.omg_heading = robot_motion.omg_heading + getAngleDiff(heading, robot_motion.omg_heading);
+	robot_motion.omg_heading = angle2HalfRadian(robot_motion.omg_heading);
 }
 
-int handle_control(JOY_STICK_BUF_TYPE handleDataTemp, double *iotarget_omg, double *iotarget_v)
+int joyStickCTRL(JOY_STICK_BUF_TYPE handleDataTemp)
 {
 	static u32 val_temp1[5] = { 0 }, val_temp2[5] = { 0 }, val_temp3[5] = { 0 };
 	int re = 0;
 	double tg_v = 0, tg_omg = 0, max_v = 5, max_omg = 0, sign_v, sign_omg;
 	static double handle_target_v = 0, handle_target_omg = 0;
-
 	tg_v = handle_target_v;
 	tg_omg = handle_target_omg;
-
 	val_temp1[0] = val_temp1[1];
 	val_temp1[1] = val_temp1[2];
 	val_temp1[2] = val_temp1[3];
 	val_temp1[3] = val_temp1[4];
 	val_temp1[4] = handleDataTemp.val[1];
 	handleDataTemp.val[1] = GetMedianNum1(&val_temp1[0], 5);
-
 	val_temp3[0] = val_temp3[1];
 	val_temp3[1] = val_temp3[2];
 	val_temp3[2] = val_temp3[3];
 	val_temp3[3] = val_temp3[4];
 	val_temp3[4] = handleDataTemp.val[3];
 	handleDataTemp.val[3] = GetMedianNum1(&val_temp3[0], 5);
-
 	val_temp2[0] = val_temp2[1];
 	val_temp2[1] = val_temp2[2];
 	val_temp2[2] = val_temp2[3];
 	val_temp2[3] = val_temp2[4];
 	val_temp2[4] = handleDataTemp.val[2];
 	handleDataTemp.val[2] = GetMedianNum1(&val_temp2[0], 5);
-
 	sign_v = signH(((float)handleDataTemp.val[1]) - 110.0f);
 	sign_omg = -signH(((float)handleDataTemp.val[3]) - 110.0f);
 	max_omg = (((float)handleDataTemp.val[2]) - 60.0f)*0.005f;
-
 	if (max_omg > 0.05)
 	{
 		if (sign_v == 0)
@@ -992,15 +952,13 @@ int handle_control(JOY_STICK_BUF_TYPE handleDataTemp, double *iotarget_omg, doub
 		{
 			tg_omg = max_omg * sign_omg;
 		}
-
-
 		if (fabs(tg_v) > 6.0f)
 		{
-			tg_v = sign(tg_v)*5.0f;
+			tg_v = getSign(tg_v)*5.0f;
 		}
 		if (fabs(tg_omg) > 0.5f)
 		{
-			tg_omg = sign(tg_omg)*0.5f;
+			tg_omg = getSign(tg_omg)*0.5f;
 		}
 	}
 	else
@@ -1025,20 +983,31 @@ int handle_control(JOY_STICK_BUF_TYPE handleDataTemp, double *iotarget_omg, doub
 	control.target_omg = (double)tg_omg;
 	return re;
 }
-
-
-void control_motor(double tv, double tomg)
+void robotStopCtrl(void)
 {
-	double a, b;
-	if (gyro.flag_zerobias == 0)
+	if (control.target_v > 0.1)
+	{
+		control.target_v -= 0.5f*TIMER_PERIOD;
+	}
+	else if (control.target_v < -0.1)
+	{
+		control.target_v += 0.5f*TIMER_PERIOD;
+	}
+	else
+	{
+		control.target_v = 0.0;//m/s					  
+	}
+}
+
+void speed2MotorCalc(double tv, double tomg)
+{
+	if (gyro.zero_bias_flag == 0)
 	{
 		tv = 0;
 		tomg = 0;
 	}
 	control.target_v = tv;//m/s
 	control.target_omg = tomg;//rad/s
-
-
 	if (robot_motion.type == MOVE_S)
 	{
 		if (control.target_v < movespd)
@@ -1050,9 +1019,7 @@ void control_motor(double tv, double tomg)
 			control.target_v = movespd;//m/s					  
 		}
 		control.target_omg = 0.0;//rad/s
-
 	}
-
 	if (robot_motion.type == MOVE_BACK)
 	{
 		if (control.target_v > -movespd)
@@ -1064,48 +1031,29 @@ void control_motor(double tv, double tomg)
 			control.target_v = -movespd;//m/s					  
 		}
 		control.target_omg = 0.0;//rad/s
-
 	}
-
-	handle_control(handleData, &a, &b);
+	joyStickCTRL(handleData);
 	if (cmd.cmdstop == 1)
 	{
-		if (control.target_v > 0.1)
-		{
-			control.target_v -= 0.5f*TIMER_PERIOD;
-		}
-		else if (control.target_v < -0.1)
-		{
-			control.target_v += 0.5f*TIMER_PERIOD;
-		}
-		else
-		{
-			control.target_v = 0.0;//m/s					  
-		}
+		robotStopCtrl();
 	}		////////////////////////////////debug/////////////////////
-//		if(handleData.val[1] < 6){handleData.val[1] = 0;}
-//		if(handleData.val[3] < 3){handleData.val[3] = 0;}
-
 		/////////////////////////////////////////////////
 #ifdef ROBOT1
 	gHalData.WheelHal[0].CmdWheelVel = (2 * control.target_v - control.target_omg*WHEEL_DIS) / 2.0;//m/s
 	gHalData.WheelHal[1].CmdWheelVel = (2 * control.target_v + control.target_omg*WHEEL_DIS) / 2.0;
 
-	gHalData.WheelHal[0].CmdMotorvel = gHalData.WheelHal[0].CmdWheelVel / WHEEL_DIA / PI*60.0*WHEEL_REDUCE_RATIO;
-	gHalData.WheelHal[1].CmdMotorvel = -gHalData.WheelHal[1].CmdWheelVel / WHEEL_DIA / PI*60.0*WHEEL_REDUCE_RATIO;
+	gHalData.WheelHal[0].CmdMotorvel = gHalData.WheelHal[0].CmdWheelVel / WHEEL_DIA / PI*60.0*_WHEEL_REDUCE_RATIO;
+	gHalData.WheelHal[1].CmdMotorvel = -gHalData.WheelHal[1].CmdWheelVel / WHEEL_DIA / PI*60.0*_WHEEL_REDUCE_RATIO;
 #endif
 
 #ifdef ROBOT2
 	gHalData.WheelHal[0].CmdWheelVel = (2 * control.target_v - control.target_omg*WHEEL_DIS) / 2.0;//m/s
 	gHalData.WheelHal[1].CmdWheelVel = (2 * control.target_v + control.target_omg*WHEEL_DIS) / 2.0;
 
-	gHalData.WheelHal[0].CmdMotorvel = -gHalData.WheelHal[0].CmdWheelVel / WHEEL_DIA / PI*60.0*WHEEL_REDUCE_RATIO;
-	gHalData.WheelHal[1].CmdMotorvel = gHalData.WheelHal[1].CmdWheelVel / WHEEL_DIA / PI*60.0*WHEEL_REDUCE_RATIO;
+	gHalData.WheelHal[0].CmdMotorvel = -gHalData.WheelHal[0].CmdWheelVel / WHEEL_DIA / PI*60.0*_WHEEL_REDUCE_RATIO;
+	gHalData.WheelHal[1].CmdMotorvel = gHalData.WheelHal[1].CmdWheelVel / WHEEL_DIA / PI*60.0*_WHEEL_REDUCE_RATIO;
 #endif		
-	//		gHalData.WheelHal[0].CmdMotorvel = 0;
-	//		gHalData.WheelHal[1].CmdMotorvel = 0;
-
-	MoveWheelSpdSet(gHalData.WheelHal[0].CmdMotorvel, gHalData.WheelHal[1].CmdMotorvel);
+	wheelMotorSpdSet(gHalData.WheelHal[0].CmdMotorvel, gHalData.WheelHal[1].CmdMotorvel);
 }
 
 

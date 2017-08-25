@@ -36,9 +36,9 @@ unsigned char CAN1_Send_Msg(unsigned char * msg,unsigned char len,unsigned int i
 void CAN1_Rx_Msg(unsigned char fifox,unsigned int *id,unsigned char *ide,unsigned char *rtr,unsigned char *len,unsigned char *dat);//接收数据
 unsigned char ZDCanSend(unsigned char len,unsigned char addr,unsigned short cmdfunc,unsigned char *data);
 unsigned char ZDSetMotorSpd(unsigned char addr,int spd);//spd:rpm
-unsigned char ZDGetMotorSpd(unsigned char addr);//spd:rpm
-unsigned char MoveWheelSpdSet(int speedLeft,int speedRight);
-unsigned char MoveWheelSpdGet(void);
+unsigned char getMotorSpeed_ZD(unsigned char addr);//spd:rpm
+unsigned char wheelMotorSpdSet(int speedLeft,int speedRight);
+unsigned char getWheelMotorSpeed2Buf(void);
 unsigned char EnableMotorDrive(unsigned char addr);
 
 

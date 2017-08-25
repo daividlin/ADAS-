@@ -19,12 +19,11 @@ GPS_REAL_BUFTYPE HUAWEI_Cmd_buf;
 GPS_REAL_BUFTYPE HUAWEI_Cmd_buf_uart;
 HUAWEI_CMDTYPE HUAWEI_cmd;
 HUAWEI_CMDTYPE HUAWEI_status;
-unsigned int ccnt;
 double L0;
 extern CURVEPLAN lineplan;
 extern CURVEPLAN lineplantest;
 extern unsigned int cnt_10mstimer;
-double global_x, global_y;
+double global_px, global_py;
 double gps_corr_x, gps_corr_y;
 unsigned int cnt_huawei_cmd_timer_5ms;
 unsigned int cnt_huawei_cmd_timer_5ms_dataarrive;
@@ -47,7 +46,6 @@ char rxHuaweiCmd(void)
 
 char rx_gps(void)
 {
-	char re = 0;
 	if (GPS_BL_buf.dataarrive == 1)
 	{
 		memcpy(&GPS_Real_buf, &GPS_BL_buf, sizeof(GPS_REAL_BUFTYPE));
@@ -69,8 +67,7 @@ char rx_gps(void)
 		Creat_DH_Index(GPS_Real_buf.data);
 		Real_GPS_Command_Process();
 	}
-	re = 1;
-	return re;
+	return 1;
 }
 
 /********************************************************************************************************
@@ -94,7 +91,7 @@ int parase_gps(void)
 	gps.compute_heading_dis += robot_motion.v*TIMER_PERIOD * 10;
 	if (gps.flag_headingconfidence == 1)
 	{
-		gps.heading = wrapToPiDe((GPS_STANDARD_HEADING - GPS_Information.Heading)*PI / 180);
+		gps.heading = angle2HalfRadian((GPS_STANDARD_HEADING - GPS_Information.Heading)*PI / 180);
 	}
 	if (gps.flag_dataarrive == 1)
 	{
@@ -181,7 +178,7 @@ int gps_correct(void)
 		//走直线时用gps角度修正
 		if (gps.flag_headingconfidence == 1)
 		{
-			gps.kalman_dheading.z = getanglediff(gps.heading, robot_motion.heading);
+			gps.kalman_dheading.z = getAngleDiff(gps.heading, robot_motion.heading);
 			kalman(&gps.kalman_dheading);
 			fuzzy_pid(&ph, fuzzypid_heading, fuzzyboundary_heading, gps.kalman_dheading.x, 3);
 			gps.piddheading.p = 0.1;
@@ -603,7 +600,7 @@ void Real_HUAWEI_Command_Process(void)
 {
 	if (strstr(HUAWEI_Cmd_buf.data, "MOVETO"))//$GPGGA,112118.000,3743.5044,N,11540.5393,E,1,06,1.6,15.3,M,-9.1,M,,0000*7E
 	{
-		lineplan.cmdlost_timer = 0;
+		lineplan.heart_beat_rx_rk3288 = 0;
 		lineplan.flag_new_cmdframe = 1;
 		HUAWEI_cmd.time = myStod(Real_Process_DH_hw(HUAWEI_Cmd_buf.data, 1)); //?7??????????
 		HUAWEI_cmd.longitude = myStod(Real_Process_DH_hw(HUAWEI_Cmd_buf.data, 2));
@@ -624,7 +621,6 @@ void Real_HUAWEI_Command_Process(void)
 
 void analysisGPS(void)
 {
-	robot_motion.flag_timer_100ms = 0;
 	rx_gps();
 	parase_gps();//gps解析
 	gps_correct();

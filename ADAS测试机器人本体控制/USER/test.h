@@ -16,12 +16,10 @@
 #define PI 3.1415926535898
 //---------------------------------------------------
 //Timer
-#define TIMER0PERIOD 0.1 //
-#define TIMER1PERIOD 0.01 //
 #define TIMEOUT_PERIOD_CANTX 1 
 //---------------------------------------------------
 #define WHEEL_DIA 0.151
-#define WHEEL_REDUCE_RATIO 35.0
+#define _WHEEL_REDUCE_RATIO 35.0
 #define WHEEL_DIS 0.44
 //---------------------------------------------------
 enum FAULTSTATUS
@@ -40,14 +38,15 @@ enum STARTSTATUS
 //
 
 
-struct TIMEOUTCOUNT_Type {
-
+struct TIMEOUTCOUNT_Type
+{
 	unsigned int GyroRx;
 	unsigned int timer;
 };
 
 
-struct GYRO_Type {
+struct GYRO_Type
+{
 	unsigned char Flag_AllowZerobias;
 	unsigned char Flag_ZerobiasComplete;
 	double RawOmg_Degs;
@@ -61,7 +60,6 @@ struct Cmd_Type
 	unsigned char dataarrive;
 	unsigned char MainType;
 	unsigned char SubType;
-
 };
 struct Robot_Type
 {
@@ -69,19 +67,15 @@ struct Robot_Type
 	double V;
 	double Omg;
 	double WheelOmg;
-
 };
 //---------------------------------------------------------------
 //Define User's structure variable
 //
-struct USER_REGS {
-	//USER
-
+struct USER_REGS 
+{
 	struct TIMEOUTCOUNT_Type TimeoutCount; //
 	struct GYRO_Type Gyro;                 //
-		   // LEFT,RIGHT
 	struct Robot_Type Robot;
-
 	struct Cmd_Type Cmd;
 };
 extern struct USER_REGS UserRegs;

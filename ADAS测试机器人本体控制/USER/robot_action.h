@@ -6,17 +6,12 @@
 //-----------------------------------------------
 //define spi io
 #define ROBOT2
-
-
 #define SPICLK PBout(13) // SPI_CLK IO
 #define SPITEA PBout(12) // SPI_CS IO
 #define SPISOMI PBin(14)// SPI_SOMI IO
 #define SPISIMO PBout(15)// SPI_SIMO IO
-
 #define TIME_IO PCout(0)
-
 #define GYRO_DIR -1.0
-
 #define MPU6050 1
 //------------------------------------------------
 //cmd
@@ -54,17 +49,17 @@
 //---------------------------------------------------
 #ifdef ROBOT1
 #define WHEEL_DIA 0.125
-#define WHEEL_REDUCE_RATIO 5.39
+#define _WHEEL_REDUCE_RATIO 5.39
 #define WHEEL_DIS 0.637
 #endif
 #ifdef ROBOT2
 #define WHEEL_DIA 0.1
-#define WHEEL_REDUCE_RATIO 2.4
+#define _WHEEL_REDUCE_RATIO 2.4
 #define WHEEL_DIS 0.62
 #endif
 #ifdef ROBOT3
 #define WHEEL_DIA 0.125
-#define WHEEL_REDUCE_RATIO 5.39
+#define _WHEEL_REDUCE_RATIO 5.39
 #define WHEEL_DIS 0.637
 #endif
 #define TASK_READY 2
@@ -82,7 +77,7 @@
 typedef struct curve_plan_sturct {
 	double x, y, heading, v;
 	int type;
-	int cmdlost_timer;
+	int heart_beat_rx_rk3288;
 	int flag_new_cmdframe;
 	int flag_new_cmdframe_old;
 }CURVEPLAN;
@@ -114,7 +109,7 @@ typedef struct motion_struct
 typedef struct gyro_struct {
 	double omg_deg_raw, omg_his_add, heading;//,omg_his[1000];
 	double omg_deg_zerobias, omg_deg_correct, aacx, aacy, aacz;
-	int flag_zerobias, flag_static, index;
+	int zero_bias_flag, flag_static, index;
 
 }ROBOTGYRO;
 
@@ -189,7 +184,7 @@ typedef struct ctrlcmd_struct
 	int targetAngle;
 	int crc;
 
-}CTRLCMD_STRUCT;
+}CTRLCMD_STRUCT_TYPE;
 //extern ROADPOS road_pos[50];
 
 extern UPLOG uplog;
@@ -241,16 +236,17 @@ extern ROBOTERRORTYPE error;;
 
 
 
-void parase_pos(void);
+void parsePosition(void);
 
-void control_motor(double tv, double tomg);
+void robotStopCtrl(void);
+void speed2MotorCalc(double tv, double tomg);
 
 void getcmdomg(double targetheading, double nowheading);
 
-void action_cmd(void);
+void excuteRK3288CMD(void);
 
-void parase_cmd(void);
-void rx_cmd(void);
+void parseRK3288CMD(void);
+void checkRK3288Msg(void);
 unsigned long SendCMD_SPI(unsigned long cmd, int bitnum);
 int InitialSPIGYRO(void);
 void rd_omg_gyro(void);
@@ -261,7 +257,7 @@ void initial_angle(void);
 void tx_uwb(void);
 int parase_uwb(void);
 int initial_data(void);
-void rd_omg_mpu6050(void);
+void rxOMGMPU6050(void);
 
 int rd_angle_hmc5883l(void);
 int curve_planning(CURVEPLAN *ioplan);

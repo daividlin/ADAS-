@@ -138,7 +138,7 @@ char rx_dcm250b(void)
 			  dcm250b_command_process(&dcm2stm_uart.rdata[0]);
 			  compass.angle = -dcm250b.heading;
 			  compass.angle = compass.angle + COMPASS_ZEROBIAS;
-		    compass.angle = wrapToPiDe(compass.angle);				
+		    compass.angle = angle2HalfRadian(compass.angle);				
 		
 				for(i=1;i<10;i++)
 				{

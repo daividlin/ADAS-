@@ -47,7 +47,7 @@ int rd_angle_hmc5883l(void)
 		{			
 			  compass.angle = (360 - (atan2((double)y-CALIBRATE_CY,(double)x-CALIBRATE_CX) * (180 / PI) + 180))/180*PI; // angle in degrees	  
 	      compass.angle = compass.angle + COMPASS_ZEROBIAS;
-		    compass.angle = wrapToPiDe(compass.angle);				
+		    compass.angle = angle2HalfRadian(compass.angle);				
 		}
 		for(i=1;i<10;i++)
 		{

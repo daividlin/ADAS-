@@ -12,7 +12,7 @@ ROBOTERRORTYPE error;
 
 unsigned int cnt_10mstimer;
 unsigned int cnt_5mstimer;
-extern double global_x, global_y;
+extern double global_px, global_py;
 CURVEPLAN lineplan;
 extern float fittingR;
 extern float adjustr;
@@ -84,11 +84,23 @@ void checkHuaweiCmdTask(void *pvPara)
 	static portTickType xLastWakeTime;
 	const portTickType xFrequency = 5;
 	xLastWakeTime = xTaskGetTickCount();
-
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		rxHuaweiCmd();
+	}
+}
+
+void is3288CmdLost(void)
+{
+	if (lineplan.heart_beat_rx_rk3288 >= 5)
+	{
+		lineplan.heart_beat_rx_rk3288 = 5;
+		lineplan.flag_new_cmdframe = 0;
+	}
+	else
+	{
+		lineplan.heart_beat_rx_rk3288++;
 	}
 }
 
@@ -97,30 +109,19 @@ void moveCtrlALGTask(void *pvPara)
 	static portTickType xLastWakeTime;
 	const portTickType xFrequency = 10;
 	xLastWakeTime = xTaskGetTickCount();
-
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		robot_motion.flag_timer_10ms = 0;
-		///////////////////lost huawei cmd ,stop./////////////////////////
-		if (lineplan.cmdlost_timer >= 5)
-		{
-			lineplan.cmdlost_timer = 5;
-			lineplan.flag_new_cmdframe = 0;
-		}
-		else
-		{
-			lineplan.cmdlost_timer++;
-		}
+		is3288CmdLost();
 		if (lineplan.flag_new_cmdframe_old == 1 && lineplan.flag_new_cmdframe == 0)
 		{
 			cmd.cmdstop = 1;
 		}
 		lineplan.flag_new_cmdframe_old = lineplan.flag_new_cmdframe;
-		global_x = -robot_motion.x + GPS_STANDARD_X;//小车坐标系->大地坐标系
-		global_y = robot_motion.y + GPS_STANDARD_Y;
+		global_px = -robot_motion.x + GPS_STANDARD_X;//小车坐标系->大地坐标系
+		global_py = robot_motion.y + GPS_STANDARD_Y;
 
-		OnButtonFansuan(global_x, global_y, &HUAWEI_status.latitude, &HUAWEI_status.longitude);//大地坐标系到椭球坐标系
+		OnButtonFansuan(global_px, global_py, &HUAWEI_status.latitude, &HUAWEI_status.longitude);//大地坐标系到椭球坐标系
 		memset(uart2rk3288.tdata, 0, sizeof(uart2rk3288.tdata));
 		sprintf(uart2rk3288.tdata, "$MOVETO,%0.12f,%0.10f,%0.10f,%0.4f,%0.4f*", \
 			HUAWEI_cmd.time, HUAWEI_status.longitude, HUAWEI_status.latitude, robot_motion.v, robot_motion.heading);
@@ -133,15 +134,15 @@ void moveCtrlALGTask(void *pvPara)
 		USART6->CR1 |= (1 << 7);
 #endif				
 #if MPU6050
-		rd_omg_mpu6050();
+		rxOMGMPU6050();
 #else
 		rd_omg_gyro();
 #endif			
-		parase_pos();
-		rx_cmd();//recive cmd
-		parase_cmd();
-		action_cmd();
-		control_motor(control.target_v, control.target_omg);
+		parsePosition();
+		checkRK3288Msg();//recive cmd
+		parseRK3288CMD();
+		excuteRK3288CMD();
+		speed2MotorCalc(control.target_v, control.target_omg);
 	}
 }
 
@@ -165,7 +166,6 @@ void debugUsartSendTask(void *pvPara)
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		robot_motion.flag_timer_200ms = 0;
 		memset(uart2cmdboard.tdata, 0, sizeof(uart2cmdboard.tdata));
 		sprintf(uart2cmdboard.tdata, "%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%d,%.3f,%.3f,%d,%.3f\r\n", lineplan.x, lineplan.y, robot_motion.x, robot_motion.y, \
 			lineplan.v, robot_motion.v, fittingR, control.offsetx, lineplan.heading, robot_motion.heading * 180 / PI, lineplan.type, control.target_omg, control.decel_stage, GPS_Information.Qual, control.target_v);
