@@ -10,7 +10,6 @@
 #include "ctype.h"
 #include "..\HARDWARE\GPS\gps.h"
 
-#include "..\HARDWARE\DCM250B\dcm250b.h"
 ROBOTUART PC2STUsart;
 
 ////////////////////////////////////////////////////////////////////////////////// 	 

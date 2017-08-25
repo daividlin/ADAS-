@@ -5,7 +5,6 @@
 #include "usart.h"
 #include "math.h"
 #include "led.h" 
-#include "sram.h"   
 #include "delay.h"  
 #include "string.h"
 #include "mpu6050.h"
@@ -15,9 +14,8 @@
 #include "..\HARDWARE\joystick\joystick.h"
 #include "FreeRTOS.h"
 #include "timers.h"
-double spd_left = 0.0;
-float movespd = 0, turnomg = 0;
-ROBOTGYRO gyro;
+float movespd = 0;
+GYRO_STRUCT_TYPE gyro;
 extern CURVEPLAN lineplan;
 float fittingR;
 extern float signOMG;
@@ -71,26 +69,24 @@ int error_process(ROBOTERRORTYPE error)
 void rxOMGMPU6050(void)
 {
 	short gyrox, gyroy, gyroz;	//陀螺仪原始数据
-//	  if(mpu_dmp_get_data(&pitch,&roll,&yaw)==0)
 	{
-		//			MPU_Get_Accelerometer(&aacx,&aacy,&aacz);	//得到加速度传感器数据
 		MPU_Get_Gyroscope(&gyrox, &gyroy, &gyroz);	//得到陀螺仪数据
 		gyro.omg_deg_raw = (double)(gyroz)*(-0.061)*1.0416;
 		if (robot_motion.type == STOP)
 		{
-			gyro.flag_static = 1;
+			gyro.flag_static = TRUE;
 		}
 		else
 		{
-			gyro.flag_static = 0;
+			gyro.flag_static = FALSE;
 		}
-		if (gyro.flag_static == 1 && gyro.zero_bias_flag == 0)
+		if (gyro.flag_static == TRUE && gyro.zero_bias_flag == FALSE)
 		{
 			gyro.omg_his_add = gyro.omg_his_add + gyro.omg_deg_raw;
 			gyro.index++;
 			if (gyro.index >= 500)
 			{
-				gyro.zero_bias_flag = 1;
+				gyro.zero_bias_flag = TRUE;
 				gyro.index = 0;
 				gyro.omg_deg_zerobias = gyro.omg_his_add / 500.0;
 				gyro.omg_his_add = 0;
@@ -98,7 +94,7 @@ void rxOMGMPU6050(void)
 
 		}
 		//当前值减零偏值
-		if (gyro.zero_bias_flag == 1)
+		if (gyro.zero_bias_flag == TRUE)
 		{
 			gyro.omg_deg_correct = gyro.omg_deg_raw - gyro.omg_deg_zerobias;
 			gyro.index = 0;
@@ -188,9 +184,13 @@ unsigned long SendCMD_SPI(unsigned long cmd, int bitnum)
 		SPICLK = 0;
 		DSP28x_usDelay(3);
 		if (cmd & 0x80000000)
+		{
 			SPISIMO = 1;
+		}
 		else
+		{
 			SPISIMO = 0;
+		}
 		cmd <<= 1;
 		DSP28x_usDelay(3);
 		SPICLK = 1;
@@ -238,29 +238,10 @@ int InitialSPIGYRO(void)
 }
 
 
-void checkRK3288Msg(void)
-{
-	CTRLCMD_STRUCT_TYPE ctrl_cmd;
-	if (PC2STUsart.dataarrive == 1)
-	{
-		PC2STUsart.dataarrive = 0;
-		cmd.dataarrive = 1;
-		memcpy(&cmd.type, &PC2STUsart.rdata[4], 1);
-		memcpy(&ctrl_cmd.targetX, &PC2STUsart.rdata[5], 4);
-		memcpy(&ctrl_cmd.targetY, &PC2STUsart.rdata[9], 4);
-		memcpy(&ctrl_cmd.targetAngle, &PC2STUsart.rdata[13], 4);
-		//			  cmd.type = ctrlcmd.type;
-		cmd.target_x = ((double)ctrl_cmd.targetX)*0.001;
-		cmd.target_y = ((double)ctrl_cmd.targetY)*0.001;
-		cmd.target_heading = ((double)ctrl_cmd.targetAngle / 1000.0) / 180.0*PI;
-
-	}
-}
 
 
 void parase_cmd_turning(void)
 {
-
 	task[0].type = SUB_TURN;
 	task[0].status = TASK_READY;
 	//	  cmd.target_heading = atan2(cmd.target_y - robot_motion.y, cmd.target_x - robot_motion.x);
@@ -327,7 +308,7 @@ int action_turning(void)
 	}
 }
 
-void parase_cmd_moving(void)
+void parse_cmd_moving(void)
 {
 	double target_heading;
 	target_heading = atan2(cmd.target_y - robot_motion.y, cmd.target_x - robot_motion.x);
@@ -349,7 +330,7 @@ void parase_cmd_moving(void)
 	task[1].target_max_omg = 0.5;
 }
 
-void parase_cmd_moving1(void)
+void parse_cmd_moving1(void)
 {
 	cmd.target_heading = atan2(lineplan.y - robot_motion.y, lineplan.x - robot_motion.x);
 	task[0].type = SUB_TRACKING;
@@ -359,7 +340,6 @@ void parase_cmd_moving1(void)
 	task[0].target_heading = robot_motion.heading + getAngleDiff(cmd.target_heading, robot_motion.heading);
 	task[0].target_max_v = 0.3;
 	task[0].target_max_omg = 0.5;
-
 }
 
 int action_moving1(void)
@@ -403,8 +383,6 @@ int action_moving1(void)
 	{
 		newdata = 0;
 	}
-
-
 	if (fabs(x0) > 0.00001 && fabs(x1) > 0.00001 && newdata == 1)
 	{
 		headAtanLastTime = atan2(y1 - y0, x1 - x0);
@@ -620,11 +598,6 @@ int action_moving(void)
 
 	control.target_omg = 0;
 	//gps信号不可用时，不重新计算目标航向角。
-//    if(fabs(control.offsety)>0.05 && gps.flag_confidence == 1)
-//    {
-//		    control.target_heading = atan2(targety - robot_motion.y, targetx - robot_motion.x);
-//        control.target_heading = robot_motion.heading + getanglediff(control.target_heading,robot_motion.heading);
-//		}
 	getcmdomg(control.target_heading, robot_motion.heading);
 
 	if (fabs(control.offsetx) > control.tol_offsetx)
@@ -675,7 +648,7 @@ void parase_cmd_initial_pos(void)
 	robot_motion.y = gps.y;
 }
 
-void parseRK3288CMD(void)
+void parseCMD(void)
 {
 	if (cmd.dataarrive == 1)
 	{
@@ -684,13 +657,10 @@ void parseRK3288CMD(void)
 		switch (cmd.type)
 		{
 		case SUB_MOVE:
-			parase_cmd_moving();
-			//robot_motion.i = 0;
-		   //clear uwb buff;
-//					   memset(&uwb,0,sizeof(struct uwb_struct));	
+			parse_cmd_moving();
 			break;
 		case SUB_TRACKING:
-			parase_cmd_moving1();
+			parse_cmd_moving1();
 			break;
 		case ENABLE:
 			vTaskDelay(2);
@@ -733,14 +703,10 @@ void parseRK3288CMD(void)
 			break;
 		case MOVE_S:
 			robot_motion.type = MOVE_S;
-			//					   control.target_v = 1;//m/s
-			//		         control.target_omg = 0.0;//rad/s
 			movespd = cmd.target_heading *180.0f / PI;
 			break;
 		case MOVE_BACK:
 			robot_motion.type = MOVE_BACK;
-			//					   control.target_v = 1;//m/s
-			//		         control.target_omg = 0.0;//rad/s
 			movespd = cmd.target_heading *180.0f / PI;
 			break;
 		case TURN_LEFT:
@@ -749,7 +715,6 @@ void parseRK3288CMD(void)
 			break;
 		case TURN_RIGHT:
 			robot_motion.type = TURN_RIGHT;
-			//					    control.target_v = 0.0;//m/s
 			control.target_omg = -cmd.target_heading *180.0f / PI;//rad/s
 			break;
 		default:

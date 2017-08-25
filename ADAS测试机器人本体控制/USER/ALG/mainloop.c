@@ -91,18 +91,6 @@ void checkHuaweiCmdTask(void *pvPara)
 	}
 }
 
-void is3288CmdLost(void)
-{
-	if (lineplan.heart_beat_rx_rk3288 >= 5)
-	{
-		lineplan.heart_beat_rx_rk3288 = 5;
-		lineplan.flag_new_cmdframe = 0;
-	}
-	else
-	{
-		lineplan.heart_beat_rx_rk3288++;
-	}
-}
 
 void moveCtrlALGTask(void *pvPara)
 {
@@ -112,7 +100,7 @@ void moveCtrlALGTask(void *pvPara)
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		is3288CmdLost();
+		is3288CmdLost(&lineplan.heart_beat_rx_rk3288, &lineplan.flag_new_cmdframe);
 		if (lineplan.flag_new_cmdframe_old == 1 && lineplan.flag_new_cmdframe == 0)
 		{
 			cmd.cmdstop = 1;
@@ -120,7 +108,6 @@ void moveCtrlALGTask(void *pvPara)
 		lineplan.flag_new_cmdframe_old = lineplan.flag_new_cmdframe;
 		global_px = -robot_motion.x + GPS_STANDARD_X;//小车坐标系->大地坐标系
 		global_py = robot_motion.y + GPS_STANDARD_Y;
-
 		OnButtonFansuan(global_px, global_py, &HUAWEI_status.latitude, &HUAWEI_status.longitude);//大地坐标系到椭球坐标系
 		memset(uart2rk3288.tdata, 0, sizeof(uart2rk3288.tdata));
 		sprintf(uart2rk3288.tdata, "$MOVETO,%0.12f,%0.10f,%0.10f,%0.4f,%0.4f*", \
@@ -140,7 +127,7 @@ void moveCtrlALGTask(void *pvPara)
 #endif			
 		parsePosition();
 		checkRK3288Msg();//recive cmd
-		parseRK3288CMD();
+		parseCMD();
 		excuteRK3288CMD();
 		speed2MotorCalc(control.target_v, control.target_omg);
 	}

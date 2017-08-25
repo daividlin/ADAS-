@@ -595,7 +595,6 @@ void Real_GPS_Command_Process(void)
 	return;
 }
 
-unsigned int cnt_huawei;
 void Real_HUAWEI_Command_Process(void)
 {
 	if (strstr(HUAWEI_Cmd_buf.data, "MOVETO"))//$GPGGA,112118.000,3743.5044,N,11540.5393,E,1,06,1.6,15.3,M,-9.1,M,,0000*7E
@@ -614,7 +613,6 @@ void Real_HUAWEI_Command_Process(void)
 		lineplan.heading = HUAWEI_cmd.heading + SCANER_STANDARD_HEADING;	//角度标定未做  
 		cmd.dataarrive = 1;
 		cmd.type = SUB_TRACKING;
-		cnt_huawei++;
 		return;
 	}
 }

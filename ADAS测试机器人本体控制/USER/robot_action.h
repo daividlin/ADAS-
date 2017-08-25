@@ -106,12 +106,11 @@ typedef struct motion_struct
 	double x, y, heading, v, omg, omg_motor, omg_gyro, omg_heading;
 }ROBOTMOTIONTYPE;
 
-typedef struct gyro_struct {
+typedef struct _GYRO_STRUCT_TYPE {
 	double omg_deg_raw, omg_his_add, heading;//,omg_his[1000];
 	double omg_deg_zerobias, omg_deg_correct, aacx, aacy, aacz;
 	int zero_bias_flag, flag_static, index;
-
-}ROBOTGYRO;
+}GYRO_STRUCT_TYPE;
 
 typedef struct control_struct
 {
@@ -194,7 +193,7 @@ extern ROBOTCONTROLTYPE control;
 extern ROBOTCMDTYPE cmd;
 extern ROBOTTASKTYPE task[2];
 extern ROBOTTASKTYPE tasktype;
-extern ROBOTGYRO gyro;
+extern GYRO_STRUCT_TYPE gyro;
 
 extern CURVEPLAN curve_plan;
 extern ROBOTERRORTYPE error;;
@@ -245,8 +244,7 @@ void getcmdomg(double targetheading, double nowheading);
 
 void excuteRK3288CMD(void);
 
-void parseRK3288CMD(void);
-void checkRK3288Msg(void);
+void parseCMD(void);
 unsigned long SendCMD_SPI(unsigned long cmd, int bitnum);
 int InitialSPIGYRO(void);
 void rd_omg_gyro(void);

@@ -9,11 +9,11 @@
 #include "inv_mpu.h"
 #include "..\HARDWARE\GPS\gps.h"
 #include "..\HARDWARE\joystick\joystick.h"
+#include "Comm2Controller.h"
 
 void mainTask(void *pvPara);
 void checkBoardTask(void *pvPara);
 void checkHuaweiCmdTask(void *pvPara);
-void is3288CmdLost(void);
 void moveCtrlALGTask(void *pvPara);
 void analysisGPSTask(void *pvPara);
 void debugUsartSendTask(void *pvPara);
