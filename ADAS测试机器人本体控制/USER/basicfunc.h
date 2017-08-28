@@ -2,20 +2,8 @@
 #define __BASICFUNC_H 
 #include "sys.h"
 #include "stdio.h"
+#include "typeinclude.h"
 
-
-#define PI 3.1415926535898
-
-typedef struct kalman_struct
-{
-	double x, z, r, p, q, k;
-}KALMAN;
-
-typedef struct weigtedmean_struct
-{
-	float dat[4];
-	float fDat;
-}WEIGTEDMEAN;
 
 int signH(float v);
 u32 GetMedianNum1(u32 * bArray, int iFilterLen);
@@ -34,25 +22,5 @@ float get_var(double a[], int num);
 int fuzzy_pid(double *p, double pid[], double boundary[], double offset, int num);
 double myStod(const char *st);
 char signdata(float data);
-typedef enum _BOOL
-{
-	FALSE = 0,
-	TRUE = 1
-}BOOL;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif
