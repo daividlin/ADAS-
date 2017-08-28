@@ -32,23 +32,12 @@ ROBOTUART PC2STUsart;
 //bit13~0，	接收到的有效字节数目
 
 //------------------
-extern int initial_data(void)
+extern int initGyroData(void)
 {
 	int re = 0;
 	gyro.flag_static = 1;
 	gyro.zero_bias_flag = 0;
 	return re;
-}
-
-int error_process(ERR_STRUCT_TYPE error)
-{
-	if (error.level == 1)
-	{
-		send_cmd_motordrive(MOTORDRIVE_ID_LEFT, MOTORDRIVE_CMD_DISABLE, 0, 0);
-		vTaskDelay(5);
-		send_cmd_motordrive(MOTORDRIVE_ID_LEFT, MOTORDRIVE_CMD_DISABLE, 0, 0);
-	}
-	return 0;
 }
 
 extern void rxOMGMPU6050(void)
@@ -96,7 +85,7 @@ extern void rd_omg_gyro(void)
 	unsigned long re;
 	unsigned short rawvalue, st;
 	short kk;
-	re = SendCMD_SPI(0x20000000, 32);
+	re = sendCmdBySpi(0x20000000, 32);
 	st = (re << 4) >> 30;
 	if (st == 1)
 	{
@@ -137,25 +126,12 @@ extern void rd_omg_gyro(void)
 	}
 }
 
-//static void SPI_Init(void)
-//{
-//	RCC->AHB1ENR |= 1 << 1;//使能PORTB时钟 
-//	//test
-//	RCC->AHB1ENR |= 1 << 2;//使能PORTB时钟 
-//	GPIO_Set(GPIOC, PIN0, GPIO_MODE_OUT, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB12,13,15设置
-//	////
-//	GPIO_Set(GPIOB, PIN12 | PIN13 | PIN15, GPIO_MODE_OUT, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB12,13,15设置
-//	GPIO_Set(GPIOB, PIN14, GPIO_MODE_IN, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB14设置
-//
-//}
-
-
 void DSP28x_usDelay(int ti)
 {
 	delay_us(ti);
 }
 
-unsigned long SendCMD_SPI(unsigned long cmd, int bitnum)
+unsigned long sendCmdBySpi(unsigned long cmd, int bitnum)
 {
 	unsigned long re = 0;
 	unsigned char i = bitnum;
@@ -192,40 +168,7 @@ unsigned long SendCMD_SPI(unsigned long cmd, int bitnum)
 	return re;
 }
 
-//static int InitialSPIGYRO(void)
-//{
-//	DSP28x_usDelay(400000);
-//	SendCMD_SPI(0x20000003, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	SendCMD_SPI(0x20000000, 32);
-//	DSP28x_usDelay(100000);
-//	return 1;
-//}
-
-
-
-
-void parase_cmd_turning(void)
+void paraseTurnCmd(void)
 {
 	task[0].type = SUB_TURN;
 	task[0].status = TASK_READY;
@@ -236,7 +179,7 @@ void parase_cmd_turning(void)
 	task[0].target_max_v = 0.2;
 	task[0].target_max_omg = 0.2;
 }
-int action_turning(void)
+int actTurn(void)
 {
 	double targetheading;
 	double heading;
@@ -252,7 +195,6 @@ int action_turning(void)
 	{
 		control.decel_stage = 1;
 	}
-
 	if (control.decel_stage == 0)
 	{
 		control.target_omg = fabs(control.target_omg) + TIMER_PERIOD * control.max_angacc;
@@ -269,9 +211,7 @@ int action_turning(void)
 	else if (control.decel_stage == 2)
 	{
 		control.target_omg = getSign(control.offset_heading)*control.min_omg*2.5;
-
 	}
-
 	if (control.decel_stage == 1 && fabs(control.target_omg) <= control.min_omg)
 	{
 		if (fabs(control.offset_heading) < control.tol_ang)
@@ -281,7 +221,6 @@ int action_turning(void)
 		}
 		control.decel_stage = 2;
 	}
-
 	if (fabs(control.offset_heading) > control.tol_ang)
 	{
 		return TASK_DOING;
@@ -293,7 +232,7 @@ int action_turning(void)
 	}
 }
 
-void parse_cmd_moving(void)
+void parseMoveCmd(void)
 {
 	double target_heading;
 	target_heading = atan2(cmd.target_y - robot_motion.y, cmd.target_x - robot_motion.x);
@@ -642,7 +581,7 @@ extern void parseCMD(void)
 		switch (cmd.type)
 		{
 		case SUB_MOVE:
-			parse_cmd_moving();
+			parseMoveCmd();
 			break;
 		case SUB_TRACKING:
 			parse_cmd_moving1();
@@ -676,7 +615,7 @@ extern void parseCMD(void)
 			vTaskDelay(2);
 			break;
 		case SUB_TURN:
-			parase_cmd_turning();
+			paraseTurnCmd();
 			break;
 		case E_STOP:
 			cmd.cmdstop = 1;
@@ -754,7 +693,7 @@ extern void excuteRK3288CMD(void)
 		break;
 	case SUB_TURN:
 		robot_motion.type = SUB_TURN;
-		task[tasktype.cur_num].status = action_turning();
+		task[tasktype.cur_num].status = actTurn();
 		break;
 	default:
 		break;
@@ -833,23 +772,18 @@ void bufPushToLeft(u32 *ptr, u32 val)
 
 int joyStickCTRL(JOY_STICK_BUF_TYPE handleDataTemp)
 {
-	static u32 val_temp1[5] = { 0 }, val_temp2[5] = { 0 }, val_temp3[5] = { 0 };
-
+	static u32 joy_stick_buf_oc1[5] = { 0 }, joy_stick_buf_oc2[5] = { 0 }, joy_stick_buf_oc3[5] = { 0 };
 	int re = 0;
 	double tg_v = 0, tg_omg = 0, max_v = 5, max_omg = 0, sign_v, sign_omg;
 	static double handle_target_v = 0, handle_target_omg = 0;
 	tg_v = handle_target_v;
 	tg_omg = handle_target_omg;
-	bufPushToLeft(val_temp1, handleDataTemp.val[1]);
-	handleDataTemp.val[1] = GetMedianNum1(&val_temp1[0], 5);
-
-	bufPushToLeft(val_temp2, handleDataTemp.val[2]);
-	handleDataTemp.val[2] = GetMedianNum1(&val_temp2[0], 5);
-
-	bufPushToLeft(val_temp3, handleDataTemp.val[3]);
-	handleDataTemp.val[3] = GetMedianNum1(&val_temp3[0], 5);
-
-
+	bufPushToLeft(joy_stick_buf_oc1, handleDataTemp.val[1]);
+	handleDataTemp.val[1] = GetMedianNum1(&joy_stick_buf_oc1[0], 5);
+	bufPushToLeft(joy_stick_buf_oc2, handleDataTemp.val[2]);
+	handleDataTemp.val[2] = GetMedianNum1(&joy_stick_buf_oc2[0], 5);
+	bufPushToLeft(joy_stick_buf_oc3, handleDataTemp.val[3]);
+	handleDataTemp.val[3] = GetMedianNum1(&joy_stick_buf_oc3[0], 5);
 	sign_v = signH(((float)handleDataTemp.val[1]) - 110.0f);
 	sign_omg = -signH(((float)handleDataTemp.val[3]) - 110.0f);
 	max_omg = (((float)handleDataTemp.val[2]) - 60.0f)*0.005f;
@@ -885,7 +819,6 @@ int joyStickCTRL(JOY_STICK_BUF_TYPE handleDataTemp)
 				tg_v = max_v;//m/s					  
 			}
 		}
-
 		if (sign_omg == 0)
 		{
 			if (tg_omg > 0.1)
@@ -994,22 +927,17 @@ extern void speed2MotorCalc(double tv, double tomg)
 #ifdef ROBOT1
 	gHalData.WheelHal[0].CmdWheelVel = (2 * control.target_v - control.target_omg*WHEEL_DIS) / 2.0;//m/s
 	gHalData.WheelHal[1].CmdWheelVel = (2 * control.target_v + control.target_omg*WHEEL_DIS) / 2.0;
-
 	gHalData.WheelHal[0].CmdMotorvel = gHalData.WheelHal[0].CmdWheelVel / WHEEL_DIA / PI*60.0*_WHEEL_REDUCE_RATIO;
 	gHalData.WheelHal[1].CmdMotorvel = -gHalData.WheelHal[1].CmdWheelVel / WHEEL_DIA / PI*60.0*_WHEEL_REDUCE_RATIO;
 #endif
-
 #ifdef ROBOT2
 	gHalData.WheelHal[0].CmdWheelVel = (2 * control.target_v - control.target_omg*WHEEL_DIS) / 2.0;//m/s
 	gHalData.WheelHal[1].CmdWheelVel = (2 * control.target_v + control.target_omg*WHEEL_DIS) / 2.0;
-
 	gHalData.WheelHal[0].CmdMotorvel = -gHalData.WheelHal[0].CmdWheelVel / WHEEL_DIA / PI*60.0*_WHEEL_REDUCE_RATIO;
 	gHalData.WheelHal[1].CmdMotorvel = gHalData.WheelHal[1].CmdWheelVel / WHEEL_DIA / PI*60.0*_WHEEL_REDUCE_RATIO;
 #endif		
 	wheelMotorSpdSet(gHalData.WheelHal[0].CmdMotorvel, gHalData.WheelHal[1].CmdMotorvel);
 }
-
-
 
 /////////////连接rk3288///////////////////////////
 #ifdef ROBOT1
@@ -1189,8 +1117,6 @@ void USART6_IRQHandler(void) //??2??????
 	}
 }
 #endif
-
-
 
 void USART3_IRQHandler(void)
 {

@@ -141,16 +141,9 @@ extern void speed2MotorCalc(double tv, double tomg);
 static void getcmdomg(double targetheading, double nowheading);
 extern void excuteRK3288CMD(void);
 extern  void parseCMD(void);
-static unsigned long SendCMD_SPI(unsigned long cmd, int bitnum);
-//static int InitialSPIGYRO(void);
+static unsigned long sendCmdBySpi(unsigned long cmd, int bitnum);
 extern void rd_omg_gyro(void);
-//static void SPI_Init(void);
-extern int initial_data(void);
+extern int initGyroData(void);
 extern void rxOMGMPU6050(void);
-//int rd_angle_hmc5883l(void);
-//int curve_planning(CURVEPLAN *ioplan);
-//int curve_planning1(CURVEPLAN *ioplan);
-//extern unsigned int rxcmd_cnt;
-int error_process(ERR_STRUCT_TYPE error);
 #endif
 

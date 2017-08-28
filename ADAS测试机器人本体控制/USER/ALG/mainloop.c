@@ -15,7 +15,7 @@ void mainTask(void *pvPara)
 	vTaskDelay(20);
 	mpu_dmp_init();
 	initGPSData();
-	initial_data();
+	initGyroData();
 	motorInit();
 	taskENTER_CRITICAL();
 	xTaskCreate((TaskFunction_t)checkHuaweiCmdTask,
