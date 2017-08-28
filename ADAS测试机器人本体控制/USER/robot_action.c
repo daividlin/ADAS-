@@ -1,19 +1,4 @@
-#include "basicfunc.h"
 #include "robot_action.h"
-#include "canopen.h"
-#include "my_can.h"
-#include "usart.h"
-#include "math.h"
-#include "led.h" 
-#include "delay.h"  
-#include "string.h"
-#include "mpu6050.h"
-#include "inv_mpu.h"
-#include "inv_mpu_dmp_motion_driver.h" 
-#include "..\HARDWARE\GPS\gps.h"
-#include "..\HARDWARE\joystick\joystick.h"
-#include "FreeRTOS.h"
-#include "timers.h"
 
 float movespd = 0;
 GYRO_STRUCT_TYPE gyro;
@@ -30,7 +15,23 @@ TASK_STRUCT_TYPE task[2];
 TASK_STRUCT_TYPE tasktype;
 ERR_STRUCT_TYPE error;
 
+//------------------
+static u8 head;
+UARTINT uart2rk3288;//main
+UARTINT uart2cmdboard;//main
+static u8 usart1_rdata[20], usart1_rlen = 0, usart1_ok = 1;
+static u16 rxcmd_cnt;
 
+ROBOTUART PC2STUsart;
+//#if EN_USART1_RX   //如果使能了接收
+//串口1中断服务程序
+//注意,读取USARTx->SR能避免莫名其妙的错误   	
+//接收状态
+//bit15，	接收完成标志
+//bit14，	接收到0x0d
+//bit13~0，	接收到的有效字节数目
+
+//------------------
 extern int initial_data(void)
 {
 	int re = 0;
@@ -820,32 +821,35 @@ extern void parsePosition(void)
 	robot_motion.omg_heading = angle2HalfRadian(robot_motion.omg_heading);
 }
 
+void bufPushToLeft(u32 *ptr, u32 val)
+{
+	u8 i = 0;
+	for (i = 0; i < 4; i++)
+	{
+		ptr[i] = ptr[i + 1];
+	}
+	ptr[4] = val;
+}
+
 int joyStickCTRL(JOY_STICK_BUF_TYPE handleDataTemp)
 {
 	static u32 val_temp1[5] = { 0 }, val_temp2[5] = { 0 }, val_temp3[5] = { 0 };
+
 	int re = 0;
 	double tg_v = 0, tg_omg = 0, max_v = 5, max_omg = 0, sign_v, sign_omg;
 	static double handle_target_v = 0, handle_target_omg = 0;
 	tg_v = handle_target_v;
 	tg_omg = handle_target_omg;
-	val_temp1[0] = val_temp1[1];
-	val_temp1[1] = val_temp1[2];
-	val_temp1[2] = val_temp1[3];
-	val_temp1[3] = val_temp1[4];
-	val_temp1[4] = handleDataTemp.val[1];
+	bufPushToLeft(val_temp1, handleDataTemp.val[1]);
 	handleDataTemp.val[1] = GetMedianNum1(&val_temp1[0], 5);
-	val_temp3[0] = val_temp3[1];
-	val_temp3[1] = val_temp3[2];
-	val_temp3[2] = val_temp3[3];
-	val_temp3[3] = val_temp3[4];
-	val_temp3[4] = handleDataTemp.val[3];
-	handleDataTemp.val[3] = GetMedianNum1(&val_temp3[0], 5);
-	val_temp2[0] = val_temp2[1];
-	val_temp2[1] = val_temp2[2];
-	val_temp2[2] = val_temp2[3];
-	val_temp2[3] = val_temp2[4];
-	val_temp2[4] = handleDataTemp.val[2];
+
+	bufPushToLeft(val_temp2, handleDataTemp.val[2]);
 	handleDataTemp.val[2] = GetMedianNum1(&val_temp2[0], 5);
+
+	bufPushToLeft(val_temp3, handleDataTemp.val[3]);
+	handleDataTemp.val[3] = GetMedianNum1(&val_temp3[0], 5);
+
+
 	sign_v = signH(((float)handleDataTemp.val[1]) - 110.0f);
 	sign_omg = -signH(((float)handleDataTemp.val[3]) - 110.0f);
 	max_omg = (((float)handleDataTemp.val[2]) - 60.0f)*0.005f;
@@ -1006,6 +1010,242 @@ extern void speed2MotorCalc(double tv, double tomg)
 }
 
 
+
+/////////////连接rk3288///////////////////////////
+#ifdef ROBOT1
+void USART1_IRQHandler(void) //??2??????
+{
+	unsigned char Recv;
+	////////////upload/////////////////////
+	if (USART1->SR&(1 << 7))
+	{
+		if (uart2rk3288.sendno >= uart2rk3288.length)
+		{
+			USART1->CR1 &= (~(1 << 7));
+			uart2rk3288.length = 0;
+			uart2rk3288.sendno = 0;
+		}
+		else
+		{
+			USART1->DR = uart2rk3288.tdata[uart2rk3288.sendno];
+			uart2rk3288.sendno++;
+		}
+	}
+	///////////////recive huawei cmd//////////////////////////////////////		
+	if (USART1->SR&(1 << 5))//接收到数据
+	{
+		Recv = USART1->DR;
+		if (HUAWEI_Cmd_buf.dataarrive == 0)
+		{
+			if (Recv == '$')
+			{
+				HUAWEI_Cmd_buf.rx_pc = 0;
+				head = '$';
+			}
+			else
+			{
+				//							if ( HUAWEI_Cmd_buf.rx_pc < sizeof( HUAWEI_Cmd_buf.data ) - 1 )
+				{
+					HUAWEI_Cmd_buf.rx_pc++;
+				}
+			}
+			if (head == '$')
+			{
+				HUAWEI_Cmd_buf.data[HUAWEI_Cmd_buf.rx_pc] = Recv;
+				if (Recv == '*')    //??????0x0D?????GPS??
+				{
+					HUAWEI_Cmd_buf.dataarrive = 1;
+					head = 0;
+
+					rxcmd_cnt++;
+					if (rxcmd_cnt == 1)
+					{
+						cnt_10mstimer = 1;
+						//cnt_huawei_cmd_timer_5ms = 1;
+						cnt_huawei_cmd_timer_5ms_dataarrive = 1;
+						//cnt_5mstimer = 1;
+					}
+				}
+			}
+		}
+	}
+}
+#endif
+
+#ifdef ROBOT2
+void UART4_IRQHandler(void) //??2??????
+{
+	unsigned char Recv;
+
+	////////////upload/////////////////////
+	if (UART4->SR&(1 << 7))
+	{
+		if (uart2rk3288.sendno >= uart2rk3288.length)
+		{
+			UART4->CR1 &= (~(1 << 7));
+			uart2rk3288.length = 0;
+			uart2rk3288.sendno = 0;
+		}
+		else
+		{
+			UART4->DR = uart2rk3288.tdata[uart2rk3288.sendno];
+			uart2rk3288.sendno++;
+		}
+	}
+
+	///////////////recive huawei cmd//////////////////////////////////////		
+	if (UART4->SR&(1 << 5))//接收到数据
+	{
+		Recv = UART4->DR;
+		if (HUAWEI_Cmd_buf.dataarrive == 0)
+		{
+			if (Recv == '$')
+			{
+				HUAWEI_Cmd_buf.rx_pc = 0;
+				head = '$';
+			}
+			else
+			{
+				//							if ( HUAWEI_Cmd_buf.rx_pc < sizeof( HUAWEI_Cmd_buf.data ) - 1 )
+				{
+					HUAWEI_Cmd_buf.rx_pc++;
+				}
+			}
+			if (head == '$')
+			{
+				HUAWEI_Cmd_buf.data[HUAWEI_Cmd_buf.rx_pc] = Recv;
+				if (Recv == '*')    //??????0x0D?????GPS??
+				{
+					HUAWEI_Cmd_buf.dataarrive = 1;
+					head = 0;
+
+					rxcmd_cnt++;
+					if (rxcmd_cnt == 1)
+					{
+						//cnt_huawei_cmd_timer_5ms = 1;
+						//cnt_5mstimer = 1;
+					}
+				}
+			}
+		}
+	}
+}
+
+void USART6_IRQHandler(void) //??2??????
+{
+	unsigned char Recv;
+
+	////////////upload/////////////////////
+	if (USART6->SR&(1 << 7))
+	{
+		if (uart2rk3288.sendno >= uart2rk3288.length)
+		{
+			USART6->CR1 &= (~(1 << 7));
+			uart2rk3288.length = 0;
+			uart2rk3288.sendno = 0;
+		}
+		else
+		{
+			USART6->DR = uart2rk3288.tdata[uart2rk3288.sendno];
+			uart2rk3288.sendno++;
+		}
+	}
+
+	///////////////recive huawei cmd//////////////////////////////////////		
+	if (USART6->SR&(1 << 5))//接收到数据
+	{
+		Recv = USART6->DR;
+		if (HUAWEI_Cmd_buf.dataarrive == 0)
+		{
+			if (Recv == '$')
+			{
+				HUAWEI_Cmd_buf.rx_pc = 0;
+				head = '$';
+			}
+			else
+			{
+				//							if ( HUAWEI_Cmd_buf.rx_pc < sizeof( HUAWEI_Cmd_buf.data ) - 1 )
+				{
+					HUAWEI_Cmd_buf.rx_pc++;
+				}
+			}
+			if (head == '$')
+			{
+				HUAWEI_Cmd_buf.data[HUAWEI_Cmd_buf.rx_pc] = Recv;
+				if (Recv == '*')    //??????0x0D?????GPS??
+				{
+					HUAWEI_Cmd_buf.dataarrive = 1;
+					head = 0;
+					rxcmd_cnt++;
+					if (rxcmd_cnt == 1)
+					{
+						//						cnt_10mstimer = 1;
+						//cnt_huawei_cmd_timer_5ms = 1;
+						//cnt_5mstimer = 1;
+					}
+				}
+			}
+		}
+	}
+}
+#endif
+
+
+
+void USART3_IRQHandler(void)
+{
+	u8 res;
+	if (USART3->SR&(1 << 7))
+	{
+		if (uart2cmdboard.sendno >= uart2cmdboard.length)
+		{
+			USART3->CR1 &= (~(1 << 7));
+			uart2cmdboard.length = 0;
+			uart2cmdboard.sendno = 0;
+		}
+		else
+		{
+			USART3->DR = uart2cmdboard.tdata[uart2cmdboard.sendno];
+			uart2cmdboard.sendno++;
+		}
+	}
+	if (USART3->SR&(1 << 5))//接收到数据
+	{
+		res = USART3->DR;
+
+		if (PC2STUsart.olddata == 0xaa && res == 0x55)
+		{
+			usart1_rdata[0] = 0xaa;
+			usart1_rdata[1] = res;
+			usart1_rlen = 2;
+			usart1_ok = 0;
+
+		}
+		else if (usart1_rlen >= 18)   //recv end
+		{
+			usart1_rdata[0] = usart1_rdata[1] = 0;
+			usart1_ok = 1;
+		}
+		else
+		{
+			if (usart1_ok == 0)
+			{
+				usart1_rdata[usart1_rlen] = res;
+				PC2STUsart.rdata[usart1_rlen] = usart1_rdata[usart1_rlen];
+				usart1_rlen++;
+				if (usart1_rlen >= 18)
+				{
+
+					if (usart1_rdata[17] == 0xbb)
+					{
+						PC2STUsart.dataarrive = 1;
+					}
+				}
+			}
+		}
+		PC2STUsart.olddata = res;
+	}
+}
 
 
 

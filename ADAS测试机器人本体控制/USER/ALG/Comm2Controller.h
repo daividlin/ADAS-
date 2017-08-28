@@ -2,7 +2,6 @@
 #define _COMM_2_CONTRLLLER_H
 
 #include "robot_action.h"
-#include "usart.h"
 #include <string.h>
 #include "gps.h"
 

@@ -100,8 +100,7 @@ typedef struct _INIT_STRUCT_TYPE
 
 typedef struct _MOTION_STRUCT_TYPE
 {
-	int i, flag_timer_5ms, flag_timer_10ms, flag_timer_100ms, timer_count_100ms, flag_timer_200ms, timer_count_200ms, flag_timer_500ms, timer_count_500ms, flag_timer_1s, timer_count_1s,
-		type, status;
+	int  type, status;
 	double x, y, heading, v, omg, omg_motor, omg_gyro, omg_heading;
 }MOTION_STRUCT_TYPE;
 
@@ -132,7 +131,8 @@ typedef struct _CMD_STRUCT_TYPE
 
 typedef struct _TASK_STRUCT_TYPE
 {
-	int type, status, cur_num; double target_x, target_y, target_heading, target_max_omg, target_max_v;
+	int type, status, cur_num; 
+	double target_x, target_y, target_heading, target_max_omg, target_max_v;
 
 }TASK_STRUCT_TYPE;
 
@@ -181,6 +181,20 @@ typedef enum _VALIDITY_ENUM_TYPE
 
 }VALIDITY_ENUM_TYPE;
 
+typedef struct uart_struct
+{
+	int dataarrive;
+	char rdata[20];
+	unsigned char olddata;
+}ROBOTUART;
+
+
+typedef struct uart_int_struct
+{
+	char tdata[100];
+	int length;
+	int sendno;
+}UARTINT;
 
 
 #endif // !_TYPE_INCLUDE_H

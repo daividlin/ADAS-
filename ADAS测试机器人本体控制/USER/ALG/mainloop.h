@@ -2,9 +2,7 @@
 #define _MAIN_LOOP_H
 
 #include "sysinit.h"
-#include "math.h"
 #include "robot_action.h"
-#include "string.h"
 #include "mpu6050.h"
 #include "inv_mpu.h"
 #include "gps.h"

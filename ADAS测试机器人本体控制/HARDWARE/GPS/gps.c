@@ -3,12 +3,9 @@
 #include "string.h"
 #include "stdlib.h"
 #include "math.h"
-#include "..\HARDWARE\GPS\gps.h"
-#include "usart.h"
+#include "gps.h"
 #include "ctype.h"
-#include "led.h"
 #include "..\USER\basicfunc.h"
-#include "..\USER\hmc5883.h"
 GPS_INFORMATION_STRUCT_TYPE GPS_Information;
 GPS_REALBUF_STRUCT_TYPE GPS_Real_buf;
 GPS_REALBUF_STRUCT_TYPE GPS_Uart_buf;
@@ -19,8 +16,6 @@ double L0;
 extern CURVE_PLAN_STRUCT_TYPE lineplantest;
 double global_px, global_py;
 double gps_corr_x, gps_corr_y;
-unsigned int cnt_huawei_cmd_timer_5ms;
-unsigned int cnt_huawei_cmd_timer_5ms_dataarrive;
 CURVE_PLAN_STRUCT_TYPE lineplan;
 
 char rx_gps(void)
@@ -652,3 +647,48 @@ extern void initGPSData(void)
 	gps.piddheading.p = 1;
 	gps.piddheading.i = 0.01;
 }
+
+static u8 head_gps;
+
+void USART2_IRQHandler(void) //??2??????
+{
+	unsigned char Recv;
+	if (USART2->SR&(1 << 5))//接收到数据
+	{
+		Recv = USART2->DR;
+		if (GPS_BL_buf.dataarrive == 0 || GPS_Heading_buf.dataarrive == 0)
+		{
+			if (Recv == '$')
+			{
+				GPS_Uart_buf.rx_pc = 0;
+				head_gps = '$';
+			}
+			else
+			{
+				if (GPS_Uart_buf.rx_pc < sizeof(GPS_Uart_buf.data) - 1)
+				{
+					GPS_Uart_buf.rx_pc++;
+				}
+			}
+			if (head_gps == '$')
+			{
+				GPS_Uart_buf.data[GPS_Uart_buf.rx_pc] = Recv;
+				if (Recv == '\r')    //??????0x0D?????GPS??
+				{
+					GPS_Uart_buf.dataarrive = 1;
+					head_gps = 0;
+					if (strstr(GPS_Uart_buf.data, "GPGGA"))
+					{
+						memcpy(&GPS_BL_buf, &GPS_Uart_buf, sizeof(GPS_REALBUF_STRUCT_TYPE));
+
+					}
+					if (strstr(GPS_Uart_buf.data, "GPHDT"))
+					{
+						memcpy(&GPS_Heading_buf, &GPS_Uart_buf, sizeof(GPS_REALBUF_STRUCT_TYPE));
+					}
+				}
+			}
+		}
+	}
+}
+///////连接控制台///////////////////////////////

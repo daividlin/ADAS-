@@ -1,19 +1,3 @@
-/*
- $License:
-    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
-    See included License.txt for License information.
- $
- */
-/**
- *  @addtogroup  DRIVERS Sensor Driver Layer
- *  @brief       Hardware drivers to communicate with sensors via I2C.
- *
- *  @{
- *      @file       inv_mpu_dmp_motion_driver.h
- *      @brief      DMP image and interface functions.
- *      @details    All functions are preceded by the dmp_ prefix to
- *                  differentiate among MPL and general driver function calls.
- */
 #ifndef _INV_MPU_DMP_MOTION_DRIVER_H_
 #define _INV_MPU_DMP_MOTION_DRIVER_H_
 

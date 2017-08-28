@@ -1,10 +1,21 @@
 #ifndef __ROBOT_ACTION_H
 #define __ROBOT_ACTION_H
 #include "typeinclude.h"
-//#include "basicfunc.h"
-//////////////////////////////////////////////
-//-----------------------------------------------
-//define spi io
+#include "basicfunc.h"
+#include "canopen.h"
+#include "my_can.h"
+#include "math.h"
+#include "led.h" 
+#include "delay.h"  
+#include "string.h"
+#include "mpu6050.h"
+#include "inv_mpu.h"
+#include "inv_mpu_dmp_motion_driver.h" 
+#include "gps.h"
+#include "..\HARDWARE\joystick\joystick.h"
+#include "FreeRTOS.h"
+#include "timers.h"
+
 #define ROBOT2
 #define SPICLK PBout(13) // SPI_CLK IO
 #define SPITEA PBout(12) // SPI_CS IO
@@ -15,9 +26,6 @@
 #define MPU6050 1
 //------------------------------------------------
 //cmd
-
-
-
 #define SUB_MOVE 0xf0
 #define SUB_TURN 0xf1
 #define INITIAL_POS 0xf2
@@ -78,8 +86,6 @@
 //---------------------------------------------------
 //extern ROADPOS road_pos[50];
 
-extern UPLOG_UNION_TYPE uplog;
-extern int pos_num;
 extern MOTION_STRUCT_TYPE robot_motion;
 extern CTRL_STRUCT_TYPE control;
 extern CMD_STRUCT_TYPE cmd;
@@ -89,8 +95,11 @@ extern GYRO_STRUCT_TYPE gyro;
 extern float fittingR;
 extern float adjustr;
 
-extern CURVE_PLAN_STRUCT_TYPE curve_plan;
-extern ERR_STRUCT_TYPE error;;
+extern UARTINT uart2rk3288;
+extern UARTINT uart2cmdboard;
+extern ROBOTUART PC2STUsart;
+extern ROBOTUART dcm2stm_uart;
+
 /*
 函数功能：使用PID控制速度
 输入参数：err---偏差值，speed_dst---速度目标百分比0~20
@@ -126,6 +135,7 @@ extern ERR_STRUCT_TYPE error;;
 //*/
 //int get_nearest_point();
 extern void parsePosition(void);
+void bufPushToLeft(u32 *ptr, u32 val);
 static void robotStopCtrl(void);
 extern void speed2MotorCalc(double tv, double tomg);
 static void getcmdomg(double targetheading, double nowheading);
@@ -140,7 +150,7 @@ extern void rxOMGMPU6050(void);
 //int rd_angle_hmc5883l(void);
 //int curve_planning(CURVEPLAN *ioplan);
 //int curve_planning1(CURVEPLAN *ioplan);
-extern unsigned int rxcmd_cnt;
+//extern unsigned int rxcmd_cnt;
 int error_process(ERR_STRUCT_TYPE error);
 #endif
 

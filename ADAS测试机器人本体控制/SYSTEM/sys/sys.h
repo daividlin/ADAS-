@@ -126,10 +126,10 @@ void Ex_NVIC_Config(u8 GPIOx,u8 BITx,u8 TRIM);				//外部中断配置函数(只对GPIOA~I
 void GPIO_AF_Set(GPIO_TypeDef* GPIOx,u8 BITx,u8 AFx);		//GPIO复用功能设置
 void GPIO_Set(GPIO_TypeDef* GPIOx,u32 BITx,u32 MODE,u32 OTYPE,u32 OSPEED,u32 PUPD);//GPIO设置函数  
 //以下为汇编函数
-void WFI_SET(void);		//执行WFI指令
-void INTX_DISABLE(void);//关闭所有中断
-void INTX_ENABLE(void);	//开启所有中断
-void MSR_MSP(u32 addr);	//设置堆栈地址 
+//void WFI_SET(void);		//执行WFI指令
+//void INTX_DISABLE(void);//关闭所有中断
+//void INTX_ENABLE(void);	//开启所有中断
+//void MSR_MSP(u32 addr);	//设置堆栈地址 
 #endif
 
 

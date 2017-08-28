@@ -12,7 +12,7 @@
 #define KEY2_PRES	3	//KEY2按下
 #define WKUP_PRES   4	//KEY_UP按下(即WK_UP)
 
-void KEY_Init(void);	//IO初始化
+static void KEY_Init(void);	//IO初始化
 u8 KEY_Scan(u8);  		//按键扫描函数					    
 void GPIO_Config(void);
 #endif

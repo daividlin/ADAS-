@@ -1,22 +1,3 @@
-/*
- $License:
-    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
-    See included License.txt for License information.
- $
- */
-/**
- *  @addtogroup  DRIVERS Sensor Driver Layer
- *  @brief       Hardware drivers to communicate with sensors via I2C.
- *
- *  @{
- *      @file       inv_mpu_dmp_motion_driver.c
- *      @brief      DMP image and interface functions.
- *      @details    All functions are preceded by the dmp_ prefix to
- *                  differentiate among MPL and general driver function calls.
- */
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include "inv_mpu.h"
@@ -489,15 +470,6 @@ struct dmp_s {
     unsigned char packet_length;
 };
 
-//static struct dmp_s dmp = {
-//    .tap_cb = NULL,
-//    .android_orient_cb = NULL,
-//    .orient = 0,
-//    .feature_mask = 0,
-//    .fifo_rate = 0,
-//    .packet_length = 0
-//};
-
 static struct dmp_s dmp={
   NULL,
   NULL,
@@ -594,15 +566,15 @@ int dmp_set_gyro_bias(long *bias)
     if (dmp.orient & 0x100)
         gyro_bias_body[2] *= -1;
 
-#ifdef EMPL_NO_64BIT
-    gyro_bias_body[0] = (long)(((float)gyro_bias_body[0] * GYRO_SF) / 1073741824.f);
-    gyro_bias_body[1] = (long)(((float)gyro_bias_body[1] * GYRO_SF) / 1073741824.f);
-    gyro_bias_body[2] = (long)(((float)gyro_bias_body[2] * GYRO_SF) / 1073741824.f);
-#else
-    gyro_bias_body[0] = (long)(((long long)gyro_bias_body[0] * GYRO_SF) >> 30);
-    gyro_bias_body[1] = (long)(((long long)gyro_bias_body[1] * GYRO_SF) >> 30);
-    gyro_bias_body[2] = (long)(((long long)gyro_bias_body[2] * GYRO_SF) >> 30);
-#endif
+//#ifdef EMPL_NO_64BIT
+//    gyro_bias_body[0] = (long)(((float)gyro_bias_body[0] * GYRO_SF) / 1073741824.f);
+//    gyro_bias_body[1] = (long)(((float)gyro_bias_body[1] * GYRO_SF) / 1073741824.f);
+//    gyro_bias_body[2] = (long)(((float)gyro_bias_body[2] * GYRO_SF) / 1073741824.f);
+//#else
+//    gyro_bias_body[0] = (long)(((long long)gyro_bias_body[0] * GYRO_SF) >> 30);
+//    gyro_bias_body[1] = (long)(((long long)gyro_bias_body[1] * GYRO_SF) >> 30);
+//    gyro_bias_body[2] = (long)(((long long)gyro_bias_body[2] * GYRO_SF) >> 30);
+//#endif
 
     regs[0] = (unsigned char)((gyro_bias_body[0] >> 24) & 0xFF);
     regs[1] = (unsigned char)((gyro_bias_body[0] >> 16) & 0xFF);

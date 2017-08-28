@@ -9,6 +9,7 @@
 #define ERelay2 PBout(13)
 void LED_Init(void);//≥ı ºªØ	
 void brakeConfig(void);
+
 #endif
 
 

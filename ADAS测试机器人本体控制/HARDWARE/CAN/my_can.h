@@ -3,9 +3,7 @@
 
 #include "sys.h"	    
 //电机控制相关参数
-#define DEVICE_ID             0x01
 #define SPD_SET_LEN           8
-#define SPD_GET_LEN           8
 #define MOTORDRIVE_ID_LEFT         0x01
 #define MOTORDRIVE_ID_RIGHT        0x02
 
@@ -29,7 +27,6 @@
 									 							 				    
 u8 CAN1_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);//CAN初始化
 u8 CAN1_Tx_Msg(u32 id,u8 ide,u8 rtr,u8 len,u8 *dat);	//发送数据
-u8 CAN1_Msg_Pend(u8 fifox);								//查询邮箱报文
 u8 CAN1_Tx_Staus(u8 mbox);  							//返回发送状态
 unsigned char CAN1_Receive_Msg(unsigned char *buf);							//接收数据
 unsigned char CAN1_Send_Msg(unsigned char * msg,unsigned char len,unsigned int id);						//发送数据
@@ -40,8 +37,6 @@ unsigned char getMotorSpeed_ZD(unsigned char addr);//spd:rpm
 unsigned char wheelMotorSpdSet(int speedLeft,int speedRight);
 unsigned char getWheelMotorSpeed2Buf(void);
 unsigned char EnableMotorDrive(unsigned char addr);
-
-
 unsigned char set_param_motec(unsigned char addr,unsigned short param_num,unsigned short param_value);//spd:rpm
 unsigned char send_cmd_motordrive(unsigned char addr,unsigned char cmd_id,unsigned short sdata1,unsigned short sdata2);
 

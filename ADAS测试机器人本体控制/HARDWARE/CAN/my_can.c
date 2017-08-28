@@ -1,6 +1,6 @@
 #include "my_can.h"
 #include "delay.h"
-#include "usart.h"
+//#include "usart.h"
 #include "canopen.h"
 
 BaseHalSt gHalData;
@@ -338,15 +338,6 @@ u8 CAN1_Tx_Staus(u8 mbox)
 	}
 	return sta;
 }
-//得到在FIFO0/FIFO1中接收到的报文个数.
-//fifox:0/1.FIFO编号;
-//返回值:FIFO0/FIFO1中的报文个数.
-u8 CAN1_Msg_Pend(u8 fifox)
-{
-	if (fifox == 0)return CAN1->RF0R & 0x03;
-	else if (fifox == 1)return CAN1->RF1R & 0x03;
-	else return 0;
-}
 //接收数据
 //fifox:邮箱号
 //id:标准ID(11位)/扩展ID(11位+18位)	    
@@ -399,12 +390,3 @@ unsigned char CAN1_Send_Msg(unsigned char * msg, unsigned char len, unsigned int
 //buf:数据缓存区;	 
 //返回值:0,无数据被收到;
 //		 其他,接收的数据长度;
-unsigned char CAN1_Receive_Msg(unsigned char *buf)
-{
-	unsigned int id;
-	unsigned char ide, rtr, len;
-	if (CAN1_Msg_Pend(0) == 0)	return 0;		//没有接收到数据,直接退出 	 
-	CAN1_Rx_Msg(0, &id, &ide, &rtr, &len, buf); 	//读取数据 
-	if (id != 0x12 || ide != 0 || rtr != 0)	len = 0;		//接收错误	   
-	return len;
-}

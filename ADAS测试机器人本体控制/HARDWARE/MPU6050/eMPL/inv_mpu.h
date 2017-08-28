@@ -34,16 +34,10 @@
 
 //移植官方MSP430 DMP驱动过来
 struct int_param_s {
-//#if defined EMPL_TARGET_MSP430 || defined MOTION_DRIVER_TARGET_MSP430
     void (*cb)(void);
     unsigned short pin;
     unsigned char lp_exit;
     unsigned char active_low;
-//#elif defined EMPL_TARGET_UC3L0
-//    unsigned long pin;
-//    void (*cb)(volatile void*);
-//    void *arg;
-//#endif
 };
 
 #define MPU_INT_STATUS_DATA_READY       (0x0001)
