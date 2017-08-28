@@ -6,30 +6,28 @@
 #include "math.h"
 #include "typeinclude.h"
 
-
-#define Valid 1
-#define Invalid 0
 #define GPS_STANDARD_X 3459265//3459316.7-54
 #define GPS_STANDARD_Y 369367//367073.6 +2290 + 2345
 #define GPS_STANDARD_HEADING 178.43
+
 #define SCANER_STANDARD_HEADING 1.569986592358889f
 #define GPS_CORRECT_L 0.157
 #define XX 0
 #define YY 1
 
 
-extern ROBOTGPSTYPE gps;
-extern GPS_INFORMATION GPS_Information;
-extern GPS_REAL_BUFTYPE GPS_Real_buf;
-extern GPS_REAL_BUFTYPE HUAWEI_Cmd_buf;
-extern GPS_REAL_BUFTYPE GPS_Heading_buf;
-extern GPS_REAL_BUFTYPE GPS_BL_buf;
-extern GPS_REAL_BUFTYPE GPS_Uart_buf;
+extern GPS_STRUCT_TYPE gps;
+extern GPS_INFORMATION_STRUCT_TYPE GPS_Information;
+extern GPS_REALBUF_STRUCT_TYPE GPS_Real_buf;
+extern GPS_REALBUF_STRUCT_TYPE HUAWEI_Cmd_buf;
+extern GPS_REALBUF_STRUCT_TYPE GPS_Heading_buf;
+extern GPS_REALBUF_STRUCT_TYPE GPS_BL_buf;
+extern GPS_REALBUF_STRUCT_TYPE GPS_Uart_buf;
 
-extern HUAWEI_CMDTYPE HUAWEI_cmd;
-extern HUAWEI_CMDTYPE HUAWEI_status;;
+extern HUAWEI_CMD_STRUCT_TYPE HUAWEI_cmd;
+extern HUAWEI_CMD_STRUCT_TYPE HUAWEI_status;;
 extern double global_px, global_py;
-extern CURVEPLAN lineplan;
+extern CURVE_PLAN_STRUCT_TYPE lineplan;
 
 static int parase_gps(void);
 static int gps_correct(void);

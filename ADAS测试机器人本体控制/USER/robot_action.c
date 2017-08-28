@@ -17,18 +17,18 @@
 
 float movespd = 0;
 GYRO_STRUCT_TYPE gyro;
-extern CURVEPLAN lineplan;
+extern CURVE_PLAN_STRUCT_TYPE lineplan;
 float fittingR;
 extern float signOMG;
 float tomg;
 float adjustr;
 
-ROBOTMOTIONTYPE robot_motion;
-ROBOTCONTROLTYPE control;
-ROBOTCMDTYPE cmd;
-ROBOTTASKTYPE task[2];
-ROBOTTASKTYPE tasktype;
-ROBOTERRORTYPE error;
+MOTION_STRUCT_TYPE robot_motion;
+CTRL_STRUCT_TYPE control;
+CMD_STRUCT_TYPE cmd;
+TASK_STRUCT_TYPE task[2];
+TASK_STRUCT_TYPE tasktype;
+ERR_STRUCT_TYPE error;
 
 
 extern int initial_data(void)
@@ -39,7 +39,7 @@ extern int initial_data(void)
 	return re;
 }
 
-int error_process(ROBOTERRORTYPE error)
+int error_process(ERR_STRUCT_TYPE error)
 {
 	if (error.level == 1)
 	{
@@ -721,7 +721,7 @@ extern void excuteRK3288CMD(void)
 		if (task[i].status == TASK_READY)
 		{
 			tasktype.cur_num = i;
-			memset(&control, 0, sizeof(struct control_struct));
+			memset(&control, 0, sizeof(struct _CTRL_STRUCT_TYPE));
 			control.target_x = task[i].target_x;
 			control.target_y = task[i].target_y;
 			control.target_heading = task[i].target_heading;

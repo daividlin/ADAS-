@@ -79,11 +79,11 @@ float GetMedianNum(float *array, unsigned char length)
 }
 
 
-int get_weigtedMean(WEIGTEDMEAN *weigtedmean_interface)
+int get_weigtedMean(WEIGTED_MEAN_STRUCT_TYPE *weigtedmean_interface)
 {
 	int re = 0;
-	WEIGTEDMEAN weigtedmean;
-	memcpy(&weigtedmean, weigtedmean_interface, sizeof(WEIGTEDMEAN));
+	WEIGTED_MEAN_STRUCT_TYPE weigtedmean;
+	memcpy(&weigtedmean, weigtedmean_interface, sizeof(WEIGTED_MEAN_STRUCT_TYPE));
 
 	weigtedmean.dat[0] = weigtedmean.dat[1];
 	weigtedmean.dat[1] = weigtedmean.dat[2];
@@ -91,7 +91,7 @@ int get_weigtedMean(WEIGTEDMEAN *weigtedmean_interface)
 	weigtedmean.dat[3] = weigtedmean.fDat;
 	weigtedmean.fDat = weigtedmean.dat[3] * 0.4f + weigtedmean.dat[2] * 0.3f + weigtedmean.dat[1] * 0.2f + weigtedmean.dat[0] * 0.1f;
 
-	memcpy(weigtedmean_interface, &weigtedmean, sizeof(WEIGTEDMEAN));
+	memcpy(weigtedmean_interface, &weigtedmean, sizeof(WEIGTED_MEAN_STRUCT_TYPE));
 	return re;
 }
 
@@ -201,16 +201,16 @@ float get_var(double a[], int num)
 输入参数：   卡尔曼结构体
 输出参数：卡尔曼结构体
 *******************************************************************************/
-int kalman(KALMAN *kalman_interface)
+int kalman(KALMAN_STRUCT_TYPE *kalman_interface)
 {
 	int re = 0;
-	KALMAN kalman;
-	memcpy(&kalman, kalman_interface, sizeof(KALMAN));
+	KALMAN_STRUCT_TYPE kalman;
+	memcpy(&kalman, kalman_interface, sizeof(KALMAN_STRUCT_TYPE));
 	kalman.p = kalman.p + kalman.q;
 	kalman.k = kalman.p / (kalman.p + kalman.r);
 	kalman.x = kalman.x + kalman.k * (kalman.z - kalman.x);
 	kalman.p = (1 - kalman.k)*kalman.p;
-	memcpy(kalman_interface, &kalman, sizeof(KALMAN));
+	memcpy(kalman_interface, &kalman, sizeof(KALMAN_STRUCT_TYPE));
 	return re;
 }
 

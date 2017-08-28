@@ -78,19 +78,19 @@
 //---------------------------------------------------
 //extern ROADPOS road_pos[50];
 
-extern UPLOG uplog;
+extern UPLOG_UNION_TYPE uplog;
 extern int pos_num;
-extern ROBOTMOTIONTYPE robot_motion;
-extern ROBOTCONTROLTYPE control;
-extern ROBOTCMDTYPE cmd;
-extern ROBOTTASKTYPE task[2];
-extern ROBOTTASKTYPE tasktype;
+extern MOTION_STRUCT_TYPE robot_motion;
+extern CTRL_STRUCT_TYPE control;
+extern CMD_STRUCT_TYPE cmd;
+extern TASK_STRUCT_TYPE task[2];
+extern TASK_STRUCT_TYPE tasktype;
 extern GYRO_STRUCT_TYPE gyro;
 extern float fittingR;
 extern float adjustr;
 
-extern CURVEPLAN curve_plan;
-extern ROBOTERRORTYPE error;;
+extern CURVE_PLAN_STRUCT_TYPE curve_plan;
+extern ERR_STRUCT_TYPE error;;
 /*
 函数功能：使用PID控制速度
 输入参数：err---偏差值，speed_dst---速度目标百分比0~20
@@ -141,6 +141,6 @@ extern void rxOMGMPU6050(void);
 //int curve_planning(CURVEPLAN *ioplan);
 //int curve_planning1(CURVEPLAN *ioplan);
 extern unsigned int rxcmd_cnt;
-int error_process(ROBOTERRORTYPE error);
+int error_process(ERR_STRUCT_TYPE error);
 #endif
 

@@ -1,9 +1,9 @@
 #include "Comm2Controller.h"
 
-GPS_REAL_BUFTYPE HUAWEI_Cmd_buf;
-GPS_REAL_BUFTYPE HUAWEI_Cmd_buf_uart;
-HUAWEI_CMDTYPE HUAWEI_cmd;
-HUAWEI_CMDTYPE HUAWEI_status;
+GPS_REALBUF_STRUCT_TYPE HUAWEI_Cmd_buf;
+GPS_REALBUF_STRUCT_TYPE HUAWEI_Cmd_buf_uart;
+HUAWEI_CMD_STRUCT_TYPE HUAWEI_cmd;
+HUAWEI_CMD_STRUCT_TYPE HUAWEI_status;
 
 
 void is3288CmdLost(int *heart_count, int* flag)
@@ -21,7 +21,7 @@ void is3288CmdLost(int *heart_count, int* flag)
 
 void checkRK3288Msg(void)
 {
-	CTRLCMD_STRUCT_TYPE ctrl_cmd;
+	CTRL_CMD_STRUCT_TYPE ctrl_cmd;
 	if (PC2STUsart.dataarrive == 1)
 	{
 		PC2STUsart.dataarrive = 0;

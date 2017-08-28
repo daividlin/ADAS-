@@ -3,35 +3,39 @@
 #include "stm32f4xx.h"
 #define PI 3.1415926535898
 
-typedef struct PID_struct
+typedef struct _ROBOT_PID_STRUCT_TYPE
 {
-	double p, i, d, value, ivalue;
-}ROBOTPID;
+	double p;
+	double	i;
+	double	d;
+	double	value;
+	double	ivalue;
+}ROBOT_PID_STRUCT_TYPE;
 
-typedef struct huawei_cmd_struct
+typedef struct _HUAWEI_CMD_STRUCT_TYPE
 {
 	double time;
 	double longitude;
 	double latitude;
 	double speed;
 	double heading;
-}HUAWEI_CMDTYPE;
+}HUAWEI_CMD_STRUCT_TYPE;
 
-typedef struct kalman_struct
+typedef struct _KALMAN_STRUCT_TYPE
 {
 	double x, z, r, p, q, k;
-}KALMAN;
+}KALMAN_STRUCT_TYPE;
 
-typedef struct gps_struct
+typedef struct _GPS_STRUCT_TYPE
 {
 	double N, a, f, e, B, L, x, y, z, lat, lon, prex, prey, spd, prespd, h, compute_heading_dis, heading, preheading, prepreheading, headingspd, xy[6][2];
 	char flag_dataarrive, flag_confidence, flag_timeout, qual, flag_headingconfidence, flag_heading_dataarrive;
 	int timeout_cnt;
-	KALMAN kalman_x, kalman_y, kalman_dx, kalman_dy, kalman_heading, kalman_dheading;
-	ROBOTPID piddx, piddy, piddheading;
-}ROBOTGPSTYPE;
+	KALMAN_STRUCT_TYPE kalman_x, kalman_y, kalman_dx, kalman_dy, kalman_heading, kalman_dheading;
+	ROBOT_PID_STRUCT_TYPE piddx, piddy, piddheading;
+}GPS_STRUCT_TYPE;
 
-typedef struct _GPS_Information
+typedef struct _GPS_INFORMATION_STRUCT_TYPE
 {
 	unsigned char Real_Locate;            //???????
 	unsigned char Located;                //?????
@@ -60,46 +64,46 @@ typedef struct _GPS_Information
 	unsigned char Use_EPH_Sum;       //ÎÀÐÇÊý
 	unsigned char User_EPH[12];        //??????????
 	unsigned short EPH_State[12][4]; //?????12?????????????????
-}GPS_INFORMATION; //GPS??
+}GPS_INFORMATION_STRUCT_TYPE; //GPS??
 
-typedef struct _GPS_Real_buf
+typedef struct _GPS_REALBUF_STRUCT_TYPE
 {
 	char dataarrive;
 	char data[256];                      //??GPS?????
 	volatile unsigned short rx_pc;    //????
-}GPS_REAL_BUFTYPE; //GPS???????
+}GPS_REALBUF_STRUCT_TYPE; //GPS???????
 
-typedef struct curve_plan_sturct {
+typedef struct _CURVE_PLAN_STRUCT_TYPE {
 	double x, y, heading, v;
 	int type;
 	int heart_beat_rx_rk3288;
 	int flag_new_cmdframe;
 	int flag_new_cmdframe_old;
-}CURVEPLAN;
+}CURVE_PLAN_STRUCT_TYPE;
 
 //---------------------------------------------------
-typedef struct error_sturct {
+typedef struct _ERR_STRUCT_TYPE {
 	unsigned char table[10];
 	unsigned char level;
-}ROBOTERRORTYPE;
+}ERR_STRUCT_TYPE;
 //---------------------------------------------------
 
 
-typedef struct initial_struct
+typedef struct _INIT_STRUCT_TYPE
 {
 	double circle_ang, circle_x, circle_y, circle_r_sum, circle_center_x, circle_center_y, \
 		uwbtag2space_ang, uwbtag2robot_ang_sum;
 	short circle_xy_cnt, circle_ang_cnt, stage;
 
-}ROBOTINITIAL;
+}INIT_STRUCT_TYPE;
 
 
-typedef struct motion_struct
+typedef struct _MOTION_STRUCT_TYPE
 {
 	int i, flag_timer_5ms, flag_timer_10ms, flag_timer_100ms, timer_count_100ms, flag_timer_200ms, timer_count_200ms, flag_timer_500ms, timer_count_500ms, flag_timer_1s, timer_count_1s,
 		type, status;
 	double x, y, heading, v, omg, omg_motor, omg_gyro, omg_heading;
-}ROBOTMOTIONTYPE;
+}MOTION_STRUCT_TYPE;
 
 typedef struct _GYRO_STRUCT_TYPE {
 	double omg_deg_raw, omg_his_add, heading;//,omg_his[1000];
@@ -107,7 +111,7 @@ typedef struct _GYRO_STRUCT_TYPE {
 	int zero_bias_flag, flag_static, index;
 }GYRO_STRUCT_TYPE;
 
-typedef struct control_struct
+typedef struct _CTRL_STRUCT_TYPE
 {
 	double offsetx, offsety, pre_offsety, offset_heading, pre_offset_heading, \
 		target_x, target_y, target_heading, target_v, pre_target_v, target_omg, \
@@ -116,57 +120,36 @@ typedef struct control_struct
 		cmd_delta_heading, cmd_heading, \
 		decel_dis, decel_ang, direction, decel_stage, \
 		tol_offsetx, tol_offsety, tol_ang, compesate_ang, targetomg_offsetheading, targetomg_offsety;
-	ROBOTINITIAL initial;
+	INIT_STRUCT_TYPE initial;
 	int handle_switch;
-}ROBOTCONTROLTYPE;
+}CTRL_STRUCT_TYPE;
 
-typedef struct cmd_struct
+typedef struct _CMD_STRUCT_TYPE
 {
 	int dataarrive, type, cmdstop;
 	double target_x, target_y, target_heading, test_target_x[3], test_target_y[3];
-}ROBOTCMDTYPE;
+}CMD_STRUCT_TYPE;
 
-typedef struct task_struct
+typedef struct _TASK_STRUCT_TYPE
 {
 	int type, status, cur_num; double target_x, target_y, target_heading, target_max_omg, target_max_v;
 
-}ROBOTTASKTYPE;
+}TASK_STRUCT_TYPE;
 
-typedef struct pos_struct
+typedef struct _POS_STRUCT_TYPE
 {
 	float sa, sx, sy, sz;
-}ROADPOS;
+}POS_STRUCT_TYPE;
 
-typedef union uplog_union
+typedef union _UPLOG_UNION_TYPE
 {
 	float f;
 	unsigned char c[4];
-}UPLOG;
-
-typedef struct log_struct
-{
-	char header0;
-	char header1;
-	char len;
-	char id;
-	char type;
-	char gyroSt;    //ÍÓÂÝ×´Ì¬
-	short gpsSt;     //GPS×´Ì¬
-	int posX;     //Î»ÖÃx
-	int posY;
-	int posAngle;
-	int compassAng;
-	int magAng;
-	int gpsX;
-	int gpsY;
-	char gpsQual;
-	char statsNum;
-	char crc;
-
-}LOG_STRUCT;
+}UPLOG_UNION_TYPE;
 
 
-typedef struct ctrlcmd_struct
+
+typedef struct _CTRL_CMD_STRUCT_TYPE
 {
 	char header0;
 	char header1;
@@ -178,21 +161,25 @@ typedef struct ctrlcmd_struct
 	int targetAngle;
 	int crc;
 
-}CTRLCMD_STRUCT_TYPE;
+}CTRL_CMD_STRUCT_TYPE;
 
-
-
-typedef struct weigtedmean_struct
+typedef struct _WEIGTED_MEAN_STRUCT_TYPE
 {
 	float dat[4];
 	float fDat;
-}WEIGTEDMEAN;
+}WEIGTED_MEAN_STRUCT_TYPE;
 
 typedef enum _BOOL
 {
 	FALSE = 0,
 	TRUE = 1
 }BOOL;
+typedef enum _VALIDITY_ENUM_TYPE
+{
+	INVALID = 0,
+	VALID = 1
+
+}VALIDITY_ENUM_TYPE;
 
 
 

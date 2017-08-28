@@ -9,27 +9,27 @@
 #include "led.h"
 #include "..\USER\basicfunc.h"
 #include "..\USER\hmc5883.h"
-GPS_INFORMATION GPS_Information;
-GPS_REAL_BUFTYPE GPS_Real_buf;
-GPS_REAL_BUFTYPE GPS_Uart_buf;
-ROBOTGPSTYPE gps;
-GPS_REAL_BUFTYPE GPS_Heading_buf;
-GPS_REAL_BUFTYPE GPS_BL_buf;
+GPS_INFORMATION_STRUCT_TYPE GPS_Information;
+GPS_REALBUF_STRUCT_TYPE GPS_Real_buf;
+GPS_REALBUF_STRUCT_TYPE GPS_Uart_buf;
+GPS_STRUCT_TYPE gps;
+GPS_REALBUF_STRUCT_TYPE GPS_Heading_buf;
+GPS_REALBUF_STRUCT_TYPE GPS_BL_buf;
 double L0;
-extern CURVEPLAN lineplantest;
+extern CURVE_PLAN_STRUCT_TYPE lineplantest;
 double global_px, global_py;
 double gps_corr_x, gps_corr_y;
 unsigned int cnt_huawei_cmd_timer_5ms;
 unsigned int cnt_huawei_cmd_timer_5ms_dataarrive;
-CURVEPLAN lineplan;
+CURVE_PLAN_STRUCT_TYPE lineplan;
 
 char rx_gps(void)
 {
 	if (GPS_BL_buf.dataarrive == 1)
 	{
-		memcpy(&GPS_Real_buf, &GPS_BL_buf, sizeof(GPS_REAL_BUFTYPE));
+		memcpy(&GPS_Real_buf, &GPS_BL_buf, sizeof(GPS_REALBUF_STRUCT_TYPE));
 	}
-	if (Calc_GPS_Sum(GPS_Real_buf.data) == Valid)
+	if (Calc_GPS_Sum(GPS_Real_buf.data) == VALID)
 	{
 		GPS_BL_buf.dataarrive = 0;
 		Creat_DH_Index(GPS_Real_buf.data);
@@ -38,9 +38,9 @@ char rx_gps(void)
 
 	if (GPS_Heading_buf.dataarrive == 1)
 	{
-		memcpy(&GPS_Real_buf, &GPS_Heading_buf, sizeof(GPS_REAL_BUFTYPE));
+		memcpy(&GPS_Real_buf, &GPS_Heading_buf, sizeof(GPS_REALBUF_STRUCT_TYPE));
 	}
-	if (Calc_GPS_Sum(GPS_Real_buf.data) == Valid)
+	if (Calc_GPS_Sum(GPS_Real_buf.data) == VALID)
 	{
 		GPS_Heading_buf.dataarrive = 0;
 		Creat_DH_Index(GPS_Real_buf.data);
@@ -466,11 +466,11 @@ unsigned char Calc_GPS_Sum(const char* Buffer)
 
 	if (sum == j)
 	{
-		return Valid; //?????
+		return VALID; //?????
 	}
 	else
 	{
-		return Invalid; //?????
+		return INVALID; //?????
 	}
 }
 

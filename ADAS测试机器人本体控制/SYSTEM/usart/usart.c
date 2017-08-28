@@ -390,12 +390,12 @@ void USART2_IRQHandler(void) //??2??????
 					head_gps = 0;
 					if (strstr(GPS_Uart_buf.data, "GPGGA"))
 					{
-						memcpy(&GPS_BL_buf, &GPS_Uart_buf, sizeof(GPS_REAL_BUFTYPE));
+						memcpy(&GPS_BL_buf, &GPS_Uart_buf, sizeof(GPS_REALBUF_STRUCT_TYPE));
 
 					}
 					if (strstr(GPS_Uart_buf.data, "GPHDT"))
 					{
-						memcpy(&GPS_Heading_buf, &GPS_Uart_buf, sizeof(GPS_REAL_BUFTYPE));
+						memcpy(&GPS_Heading_buf, &GPS_Uart_buf, sizeof(GPS_REALBUF_STRUCT_TYPE));
 					}
 				}
 			}
