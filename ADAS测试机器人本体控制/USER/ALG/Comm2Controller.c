@@ -1,5 +1,11 @@
 #include "Comm2Controller.h"
 
+GPS_REAL_BUFTYPE HUAWEI_Cmd_buf;
+GPS_REAL_BUFTYPE HUAWEI_Cmd_buf_uart;
+HUAWEI_CMDTYPE HUAWEI_cmd;
+HUAWEI_CMDTYPE HUAWEI_status;
+
+
 void is3288CmdLost(int *heart_count, int* flag)
 {
 	if (*heart_count>= 5)
@@ -30,3 +36,4 @@ void checkRK3288Msg(void)
 		cmd.target_heading = ((double)ctrl_cmd.targetAngle / 1000.0) / 180.0*PI;
 	}
 }
+

@@ -3,20 +3,6 @@
 
 extern TaskHandle_t mainTaskHandle;
 
-ROBOTMOTIONTYPE robot_motion;
-ROBOTCONTROLTYPE control;
-ROBOTCMDTYPE cmd;
-ROBOTTASKTYPE task[2];
-ROBOTTASKTYPE tasktype;
-ROBOTERRORTYPE error;
-
-unsigned int cnt_10mstimer;
-unsigned int cnt_5mstimer;
-extern double global_px, global_py;
-CURVEPLAN lineplan;
-extern float fittingR;
-extern float adjustr;
-
 void mainTask(void *pvPara)
 {
 	peripheralsUARTInit();
@@ -28,6 +14,7 @@ void mainTask(void *pvPara)
 	MPU_Init();
 	vTaskDelay(20);
 	mpu_dmp_init();
+	initGPSData();
 	initial_data();
 	motorInit();
 	taskENTER_CRITICAL();

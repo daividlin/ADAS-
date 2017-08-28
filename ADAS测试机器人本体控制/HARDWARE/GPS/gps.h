@@ -88,24 +88,28 @@ extern GPS_REAL_BUFTYPE GPS_Uart_buf;
 
 extern HUAWEI_CMDTYPE HUAWEI_cmd;
 extern HUAWEI_CMDTYPE HUAWEI_status;;
-int parase_gps(void);
-int gps_correct(void);
-int gps_compute_heading(void);
+extern double global_px, global_py;
+extern CURVEPLAN lineplan;
 
-int Gauss_projection(double *x, double *y, double *z, double B, double L);
+static int parase_gps(void);
+static int gps_correct(void);
+//static int gps_compute_heading(void);
 
-void Real_GPS_Command_Process(void);
-void Real_HUAWEI_Command_Process(void);
-void analysisGPS(void);
-char* Real_Process_DH(char* buffer, unsigned char num);
+static int Gauss_projection(double *x, double *y, double *z, double B, double L);
 
-void Creat_DH_Index(char* buffer);
-void Creat_CMD_Index(char* buffer);
-unsigned char Calc_GPS_Sum(const char* Buffer);
+static void Real_GPS_Command_Process(void);
+extern void analysisGPS(void);
+static char* Real_Process_DH(char* buffer, unsigned char num);
 
-char rx_gps(void);
+static void Creat_DH_Index(char* buffer);
+static void Creat_CMD_Index(char* buffer);
+static unsigned char Calc_GPS_Sum(const char* Buffer);
+extern char rxHuaweiCmd(void);
+static void Real_HUAWEI_Command_Process(void);
 
-char rxHuaweiCmd(void);
+extern void initGPSData(void);
+static char rx_gps(void);
+
 
 extern void OnButtonFansuan(double x, double y, double *B, double *L);
 

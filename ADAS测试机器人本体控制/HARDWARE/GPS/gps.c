@@ -15,34 +15,13 @@ GPS_REAL_BUFTYPE GPS_Uart_buf;
 ROBOTGPSTYPE gps;
 GPS_REAL_BUFTYPE GPS_Heading_buf;
 GPS_REAL_BUFTYPE GPS_BL_buf;
-GPS_REAL_BUFTYPE HUAWEI_Cmd_buf;
-GPS_REAL_BUFTYPE HUAWEI_Cmd_buf_uart;
-HUAWEI_CMDTYPE HUAWEI_cmd;
-HUAWEI_CMDTYPE HUAWEI_status;
 double L0;
-extern CURVEPLAN lineplan;
 extern CURVEPLAN lineplantest;
-extern unsigned int cnt_10mstimer;
 double global_px, global_py;
 double gps_corr_x, gps_corr_y;
 unsigned int cnt_huawei_cmd_timer_5ms;
 unsigned int cnt_huawei_cmd_timer_5ms_dataarrive;
-char rxHuaweiCmd(void)
-{
-	char re = 0;
-	if (HUAWEI_Cmd_buf.dataarrive == 1)
-	{
-		HUAWEI_Cmd_buf.dataarrive = 0;
-		{
-			{
-				Creat_CMD_Index(HUAWEI_Cmd_buf.data);
-				Real_HUAWEI_Command_Process();
-			}
-		}
-		re = 1;
-	}
-	return re;
-}
+CURVEPLAN lineplan;
 
 char rx_gps(void)
 {
@@ -210,6 +189,7 @@ int gps_correct(void)
 **输入参数 :
 **输出参数 :
 *********************************************************************************************************/
+/*
 int gps_compute_heading(void)
 {
 	int re = 0, i = 0;
@@ -269,6 +249,7 @@ int gps_compute_heading(void)
 
 	return re;
 }
+*/
 
 /********************************************************************************************************
 **函数信息 :int Gauss_projection(double *x,double *y,double *z,double B,double L)
@@ -344,7 +325,7 @@ void OnButtonFansuan(double x, double y, double *B, double *L)
 	int m_index;
 	int m_daiindex;
 	double p0 = 57.2957795130823208767981;
-	double radian_to_angle = 180 / PI;
+	double radian_to_angle = 180.0 / PI;
 	double tf, Nf, vf, Y, q, Bf, k, B0, dL;
 	double max_x, max_y, min_x, min_y;
 	max_x = 10002137.5;
@@ -595,6 +576,32 @@ void Real_GPS_Command_Process(void)
 	return;
 }
 
+
+extern void analysisGPS(void)
+{
+	rx_gps();
+	parase_gps();//gps解析
+	gps_correct();
+}
+
+
+extern char rxHuaweiCmd(void)
+{
+	char re = 0;
+	if (HUAWEI_Cmd_buf.dataarrive == 1)
+	{
+		HUAWEI_Cmd_buf.dataarrive = 0;
+		{
+			{
+				Creat_CMD_Index(HUAWEI_Cmd_buf.data);
+				Real_HUAWEI_Command_Process();
+			}
+		}
+		re = 1;
+	}
+	return re;
+}
+
 void Real_HUAWEI_Command_Process(void)
 {
 	if (strstr(HUAWEI_Cmd_buf.data, "MOVETO"))//$GPGGA,112118.000,3743.5044,N,11540.5393,E,1,06,1.6,15.3,M,-9.1,M,,0000*7E
@@ -617,11 +624,31 @@ void Real_HUAWEI_Command_Process(void)
 	}
 }
 
-void analysisGPS(void)
+extern void initGPSData(void)
 {
-	rx_gps();
-	parase_gps();//gps解析
-	gps_correct();
+	gps.flag_confidence = 1;
+	gps.kalman_x.p = 0.01;
+	gps.kalman_y.p = 0.01;
+	gps.kalman_dx.p = 0.01;
+	gps.kalman_dy.p = 0.01;
+	gps.kalman_heading.p = 0.01;
+	gps.kalman_dheading.p = 0.01;
+	gps.kalman_x.q = 0.01;
+	gps.kalman_y.q = 0.01;
+	gps.kalman_dx.q = 0.01;
+	gps.kalman_dy.q = 0.01;
+	gps.kalman_heading.q = 0.01;
+	gps.kalman_dheading.q = 0.01;
+	gps.kalman_x.r = 2.0;
+	gps.kalman_y.r = 2.0;
+	gps.kalman_dx.r = 0.2;
+	gps.kalman_dy.r = 0.2;
+	gps.kalman_heading.r = 0.2;
+	gps.kalman_dheading.r = 0.2;
+	gps.piddx.p = 0.1;
+	gps.piddx.i = 0.001;
+	gps.piddy.p = 0.1;
+	gps.piddy.i = 0.001;
+	gps.piddheading.p = 1;
+	gps.piddheading.i = 0.01;
 }
-
-

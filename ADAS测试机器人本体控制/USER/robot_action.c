@@ -14,6 +14,7 @@
 #include "..\HARDWARE\joystick\joystick.h"
 #include "FreeRTOS.h"
 #include "timers.h"
+
 float movespd = 0;
 GYRO_STRUCT_TYPE gyro;
 extern CURVEPLAN lineplan;
@@ -21,37 +22,20 @@ float fittingR;
 extern float signOMG;
 float tomg;
 float adjustr;
-int initial_data(void)
+
+ROBOTMOTIONTYPE robot_motion;
+ROBOTCONTROLTYPE control;
+ROBOTCMDTYPE cmd;
+ROBOTTASKTYPE task[2];
+ROBOTTASKTYPE tasktype;
+ROBOTERRORTYPE error;
+
+
+extern int initial_data(void)
 {
 	int re = 0;
 	gyro.flag_static = 1;
 	gyro.zero_bias_flag = 0;
-	gps.flag_confidence = 1;
-	gps.kalman_x.p = 0.01;
-	gps.kalman_y.p = 0.01;
-	gps.kalman_dx.p = 0.01;
-	gps.kalman_dy.p = 0.01;
-	gps.kalman_heading.p = 0.01;
-	gps.kalman_dheading.p = 0.01;
-	gps.kalman_x.q = 0.01;
-	gps.kalman_y.q = 0.01;
-	gps.kalman_dx.q = 0.01;
-	gps.kalman_dy.q = 0.01;
-	gps.kalman_heading.q = 0.01;
-	gps.kalman_dheading.q = 0.01;
-	gps.kalman_x.r = 2.0;
-	gps.kalman_y.r = 2.0;
-	gps.kalman_dx.r = 0.2;
-	gps.kalman_dy.r = 0.2;
-	gps.kalman_heading.r = 0.2;
-	gps.kalman_dheading.r = 0.2;
-	gps.piddx.p = 0.1;
-	gps.piddx.i = 0.001;
-	gps.piddy.p = 0.1;
-	gps.piddy.i = 0.001;
-	gps.piddheading.p = 1;
-	gps.piddheading.i = 0.01;
-
 	return re;
 }
 
@@ -66,7 +50,7 @@ int error_process(ROBOTERRORTYPE error)
 	return 0;
 }
 
-void rxOMGMPU6050(void)
+extern void rxOMGMPU6050(void)
 {
 	short gyrox, gyroy, gyroz;	//陀螺仪原始数据
 	{
@@ -106,7 +90,7 @@ void rxOMGMPU6050(void)
 	}
 }
 
-void rd_omg_gyro(void)
+extern void rd_omg_gyro(void)
 {
 	unsigned long re;
 	unsigned short rawvalue, st;
@@ -152,17 +136,17 @@ void rd_omg_gyro(void)
 	}
 }
 
-void SPI_Init(void)
-{
-	RCC->AHB1ENR |= 1 << 1;//使能PORTB时钟 
-	//test
-	RCC->AHB1ENR |= 1 << 2;//使能PORTB时钟 
-	GPIO_Set(GPIOC, PIN0, GPIO_MODE_OUT, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB12,13,15设置
-	////
-	GPIO_Set(GPIOB, PIN12 | PIN13 | PIN15, GPIO_MODE_OUT, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB12,13,15设置
-	GPIO_Set(GPIOB, PIN14, GPIO_MODE_IN, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB14设置
-
-}
+//static void SPI_Init(void)
+//{
+//	RCC->AHB1ENR |= 1 << 1;//使能PORTB时钟 
+//	//test
+//	RCC->AHB1ENR |= 1 << 2;//使能PORTB时钟 
+//	GPIO_Set(GPIOC, PIN0, GPIO_MODE_OUT, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB12,13,15设置
+//	////
+//	GPIO_Set(GPIOB, PIN12 | PIN13 | PIN15, GPIO_MODE_OUT, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB12,13,15设置
+//	GPIO_Set(GPIOB, PIN14, GPIO_MODE_IN, GPIO_OTYPE_PP, GPIO_SPEED_100M, GPIO_PUPD_PU); //PB14设置
+//
+//}
 
 
 void DSP28x_usDelay(int ti)
@@ -207,35 +191,35 @@ unsigned long SendCMD_SPI(unsigned long cmd, int bitnum)
 	return re;
 }
 
-int InitialSPIGYRO(void)
-{
-	DSP28x_usDelay(400000);
-	SendCMD_SPI(0x20000003, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	SendCMD_SPI(0x20000000, 32);
-	DSP28x_usDelay(100000);
-	return 1;
-}
+//static int InitialSPIGYRO(void)
+//{
+//	DSP28x_usDelay(400000);
+//	SendCMD_SPI(0x20000003, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	SendCMD_SPI(0x20000000, 32);
+//	DSP28x_usDelay(100000);
+//	return 1;
+//}
 
 
 
@@ -648,7 +632,7 @@ void parase_cmd_initial_pos(void)
 	robot_motion.y = gps.y;
 }
 
-void parseCMD(void)
+extern void parseCMD(void)
 {
 	if (cmd.dataarrive == 1)
 	{
@@ -723,7 +707,7 @@ void parseCMD(void)
 	}
 }
 
-void excuteRK3288CMD(void)
+extern void excuteRK3288CMD(void)
 {
 	int i;
 	int get_job = 0;
@@ -777,7 +761,7 @@ void excuteRK3288CMD(void)
 
 }
 
-void parsePosition(void)
+extern void parsePosition(void)
 {
 	double heading;
 	static int zero_bias_last_flag;
@@ -964,7 +948,7 @@ void robotStopCtrl(void)
 	}
 }
 
-void speed2MotorCalc(double tv, double tomg)
+extern void speed2MotorCalc(double tv, double tomg)
 {
 	if (gyro.zero_bias_flag == 0)
 	{

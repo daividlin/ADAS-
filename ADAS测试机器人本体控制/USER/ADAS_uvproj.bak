@@ -350,7 +350,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USMART;..\HARDWARE\LED;..\HARDWARE\BEEP;..\HARDWARE\KEY;..\HARDWARE\EXTI;..\HARDWARE\WDG;..\HARDWARE\TIMER;..\HARDWARE\TPAD;..\HARDWARE\OLED;..\HARDWARE\LCD;..\HARDWARE\RTC;..\HARDWARE\RNG;..\HARDWARE\WKUP;..\HARDWARE\ADC;..\HARDWARE\LSENS;..\HARDWARE\DAC;..\HARDWARE\DMA;..\HARDWARE\24CXX;..\HARDWARE\SPI;..\HARDWARE\W25QXX;..\HARDWARE\RS485;..\HARDWARE\CAN;..\HARDWARE\TOUCH;..\HARDWARE\REMOTE;..\HARDWARE\DS18B20;..\HARDWARE\DHT11;..\HARDWARE\MPU6050;..\HARDWARE\MPU6050\eMPL;..\HARDWARE\NRF24L01;..\HARDWARE\STMFLASH;..\HARDWARE\DCMI;..\HARDWARE\OV2640;..\HARDWARE\USART2;..\HARDWARE\SRAM;..\HARDWARE\SDIO;..\HARDWARE\WM8978;..\HARDWARE\I2S;..\MALLOC;..\FATFS\src;..\FATFS\exfuns;..\TEXT;..\PICTURE;..\AUDIOCODEC\wav;..\APP;.\SYSINIT;..\FreeRTOS\include;.\ALG;..\USER</IncludePath>
+              <IncludePath>..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USMART;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\TIMER;..\HARDWARE\CAN;..\HARDWARE\MPU6050;..\HARDWARE\MPU6050\eMPL;.\SYSINIT;..\FreeRTOS\include;.\ALG;..\USER;..\HARDWARE\IIC</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -402,9 +402,9 @@
           <GroupName>USER</GroupName>
           <Files>
             <File>
-              <FileName>test.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\test.c</FilePath>
+              <FilePath>.\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -455,21 +455,6 @@
               <FileName>key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\KEY\key.c</FilePath>
-            </File>
-            <File>
-              <FileName>myiic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\24CXX\myiic.c</FilePath>
-            </File>
-            <File>
-              <FileName>i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\I2S\i2s.c</FilePath>
-            </File>
-            <File>
-              <FileName>24cxx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\24CXX\24cxx.c</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>
@@ -570,6 +555,21 @@
               <FileName>mainloop.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\ALG\mainloop.c</FilePath>
+            </File>
+            <File>
+              <FileName>Comm2Controller.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ALG\Comm2Controller.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>IIC</GroupName>
+          <Files>
+            <File>
+              <FileName>myiic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\IIC\myiic.c</FilePath>
             </File>
           </Files>
         </Group>

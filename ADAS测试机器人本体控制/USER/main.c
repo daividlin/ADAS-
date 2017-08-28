@@ -6,6 +6,15 @@
 #define _MAIN_TASK_PRO 2
 TaskHandle_t mainTaskHandle;
 
+//************************************
+// Method:    main
+// FullName:  main
+// Access:    public 
+// Returns:   int
+// Qualifier:初始化外设，对操作系统进行初始化，创建主任务，主任务中
+			//规划其他任务
+// Parameter: void
+//************************************
 int main(void)
 {
     stm32SysInit();
@@ -17,5 +26,4 @@ int main(void)
 		(TaskHandle_t)&mainTaskHandle);
 	vTaskStartScheduler();
 }
-//10MS
 

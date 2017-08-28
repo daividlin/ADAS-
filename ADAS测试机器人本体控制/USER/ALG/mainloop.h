@@ -7,7 +7,7 @@
 #include "string.h"
 #include "mpu6050.h"
 #include "inv_mpu.h"
-#include "..\HARDWARE\GPS\gps.h"
+#include "gps.h"
 #include "..\HARDWARE\joystick\joystick.h"
 #include "Comm2Controller.h"
 

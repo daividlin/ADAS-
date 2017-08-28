@@ -16,6 +16,8 @@
 //------------------------------------------------
 //cmd
 
+
+
 #define SUB_MOVE 0xf0
 #define SUB_TURN 0xf1
 #define INITIAL_POS 0xf2
@@ -194,6 +196,8 @@ extern ROBOTCMDTYPE cmd;
 extern ROBOTTASKTYPE task[2];
 extern ROBOTTASKTYPE tasktype;
 extern GYRO_STRUCT_TYPE gyro;
+extern float fittingR;
+extern float adjustr;
 
 extern CURVEPLAN curve_plan;
 extern ROBOTERRORTYPE error;;
@@ -231,37 +235,22 @@ extern ROBOTERRORTYPE error;;
 //返回值：最近点编号
 //*/
 //int get_nearest_point();
-
-
-
-
-void parsePosition(void);
-
-void robotStopCtrl(void);
-void speed2MotorCalc(double tv, double tomg);
-
-void getcmdomg(double targetheading, double nowheading);
-
-void excuteRK3288CMD(void);
-
-void parseCMD(void);
-unsigned long SendCMD_SPI(unsigned long cmd, int bitnum);
-int InitialSPIGYRO(void);
-void rd_omg_gyro(void);
-void SPI_Init(void);
-void move_test(void);
-int action_initial_ang(void);
-void initial_angle(void);
-void tx_uwb(void);
-int parase_uwb(void);
-int initial_data(void);
-void rxOMGMPU6050(void);
-
-int rd_angle_hmc5883l(void);
-int curve_planning(CURVEPLAN *ioplan);
-int curve_planning1(CURVEPLAN *ioplan);
+extern void parsePosition(void);
+static void robotStopCtrl(void);
+extern void speed2MotorCalc(double tv, double tomg);
+static void getcmdomg(double targetheading, double nowheading);
+extern void excuteRK3288CMD(void);
+extern  void parseCMD(void);
+static unsigned long SendCMD_SPI(unsigned long cmd, int bitnum);
+//static int InitialSPIGYRO(void);
+extern void rd_omg_gyro(void);
+//static void SPI_Init(void);
+extern int initial_data(void);
+extern void rxOMGMPU6050(void);
+//int rd_angle_hmc5883l(void);
+//int curve_planning(CURVEPLAN *ioplan);
+//int curve_planning1(CURVEPLAN *ioplan);
 extern unsigned int rxcmd_cnt;
-
 int error_process(ROBOTERRORTYPE error);
 #endif
 

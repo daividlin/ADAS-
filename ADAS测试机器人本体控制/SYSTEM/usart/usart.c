@@ -11,54 +11,6 @@
 #include "..\HARDWARE\GPS\gps.h"
 
 ROBOTUART PC2STUsart;
-
-////////////////////////////////////////////////////////////////////////////////// 	 
-//如果使用ucos,则包括下面的头文件即可.
-#if SYSTEM_SUPPORT_UCOS
-#include "includes.h"					//ucos 使用	  
-#endif
-
-
-//加入以下代码,支持printf函数,而不需要选择use MicroLIB	  
-#if 1
-#pragma import(__use_no_semihosting)             
-//标准库需要的支持函数                 
-struct __FILE
-{
-	int handle;
-	/* Whatever you require here. If the only file you are using is */
-	/* standard output using printf() for debugging, no file handling */
-	/* is required. */
-};
-/* FILE is typedef’ d in stdio.h. */
-FILE __stdout;
-//定义_sys_exit()以避免使用半主机模式    
-_sys_exit(int x)
-{
-	x = x;
-}
-//重定义fputc函数 
-//int fputc(int ch, FILE *f)
-//{      
-//	while((USART1->SR&0X40)==0);//循环发送,直到发送完毕   
-//	USART1->DR = (u8) ch;      
-//	return ch;
-//}
-
-int fputc(int ch, FILE *f)
-{
-	while ((USART3->SR & 0X40) == 0);//循环发送,直到发送完毕   
-	USART3->DR = (u8)ch;
-	return ch;
-}
-#endif 
-//end
-//////////////////////////////////////////////////////////////////
-
-
-
-
-
 //#if EN_USART1_RX   //如果使能了接收
 //串口1中断服务程序
 //注意,读取USARTx->SR能避免莫名其妙的错误   	
@@ -215,57 +167,15 @@ void uart6_init(u32 pclk2, u32 bound)
 	USART6->CR1 |= 1 << 13;  	//串口使能
 }
 
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-void uart1_send(u8 ch)
-{
-	while ((USART1->SR & 0X40) == 0);//循环发送,直到发送完毕   
-	USART1->DR = ch;
-}
-
-////////////////////com2////////////////////////
-void uart2_send(u8 ch)
-{
-	while ((USART2->SR & 0X40) == 0);//循环发送,直到发送完毕   
-	USART2->DR = ch;
-
-	//uart3_send(ch);	
-}
-
-////////////////////com1////////////////////////
-void uart3_send(u8 ch)
-{
-	while ((USART3->SR & 0X40) == 0);//循环发送,直到发送完毕   
-	USART3->DR = ch;
-
-	//uart3_send(ch);	
-}
-
-void uart4_send(u8 ch)
-{
-	while ((UART4->SR & 0X40) == 0);//循环发送,直到发送完毕   
-	UART4->DR = ch;
-
-	//uart3_send(ch);	
-}
-void uart1_sendstr(char* str)
-{
-	while (*str != 0)
-	{
-		uart1_send(*str);
-		str++;
-	}
-}
-
 unsigned char head;
 unsigned int ccntin;
 UARTINT uart2rk3288;
 UARTINT uart2cmdboard;
 unsigned char usart1_rdata[20], usart1_rlen = 0, usart1_ok = 1;
 unsigned int rxcmd_cnt;
-extern unsigned int cnt_10mstimer;
-extern unsigned int cnt_5mstimer;
+//static unsigned int cnt_10mstimer = 0;
+
+//extern unsigned int cnt_5mstimer;
 extern unsigned int cnt_huawei_cmd_timer_5ms;
 extern unsigned int cnt_huawei_cmd_timer_5ms_dataarrive;
 /////////////连接rk3288///////////////////////////
@@ -320,7 +230,7 @@ void USART1_IRQHandler(void) //??2??????
 						cnt_10mstimer = 1;
 						cnt_huawei_cmd_timer_5ms = 1;
 						cnt_huawei_cmd_timer_5ms_dataarrive = 1;
-						cnt_5mstimer = 1;
+						//cnt_5mstimer = 1;
 					}
 				}
 			}
@@ -379,10 +289,9 @@ void UART4_IRQHandler(void) //??2??????
 					rxcmd_cnt++;
 					if (rxcmd_cnt == 1)
 					{
-						cnt_10mstimer = 1;
 						cnt_huawei_cmd_timer_5ms = 1;
 						cnt_huawei_cmd_timer_5ms_dataarrive = 1;
-						cnt_5mstimer = 1;
+						//cnt_5mstimer = 1;
 					}
 				}
 			}
@@ -435,14 +344,13 @@ void USART6_IRQHandler(void) //??2??????
 				{
 					HUAWEI_Cmd_buf.dataarrive = 1;
 					head = 0;
-
 					rxcmd_cnt++;
 					if (rxcmd_cnt == 1)
 					{
-						cnt_10mstimer = 1;
+//						cnt_10mstimer = 1;
 						cnt_huawei_cmd_timer_5ms = 1;
 						cnt_huawei_cmd_timer_5ms_dataarrive = 1;
-						cnt_5mstimer = 1;
+						//cnt_5mstimer = 1;
 					}
 				}
 			}
@@ -499,8 +407,6 @@ void USART2_IRQHandler(void) //??2??????
 void USART3_IRQHandler(void)
 {
 	u8 res;
-
-
 	if (USART3->SR&(1 << 7))
 	{
 		if (uart2cmdboard.sendno >= uart2cmdboard.length)
@@ -515,8 +421,6 @@ void USART3_IRQHandler(void)
 			uart2cmdboard.sendno++;
 		}
 	}
-
-
 	if (USART3->SR&(1 << 5))//接收到数据
 	{
 		res = USART3->DR;
@@ -556,32 +460,6 @@ void USART3_IRQHandler(void)
 }
 
 
-void SendLogData(void)
-{
-	LOG_STRUCT logStrc;
-	int i = 0, sz;
-	char *p = &logStrc.header0;
-	logStrc.header0 = 0xaa;
-	logStrc.header1 = 0x55;
-	logStrc.len = 31;
-	logStrc.id = 0xAB;
-	logStrc.type = 0xFE;
-	logStrc.gyroSt = (char)(gyro.zero_bias_flag);    //陀螺状态
-	logStrc.gpsSt = (char)gps.flag_confidence;     //GPS状态
-	logStrc.posX = (int)(robot_motion.x*1000.0);     //位置x
-	logStrc.posY = (int)(robot_motion.y*1000.0);
-	logStrc.posAngle = (int)(angle2HalfRadian(robot_motion.heading)*1800.0 / PI);
-	logStrc.gpsQual = (char)(GPS_Information.Qual);
-	logStrc.gpsX = (int)(gps.x*1000.0);
-	logStrc.gpsY = (int)(gps.y*1000.0);
-	logStrc.statsNum = (char)(GPS_Information.Use_EPH_Sum);
-	logStrc.crc = '*';
-	sz = sizeof(LOG_STRUCT);
-	for (i = 0; i < sz; i++)
-	{
-		uart3_send(*(p + i));
-	}
-}
 
 #endif // !_USART_H
 

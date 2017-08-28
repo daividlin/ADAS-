@@ -4,6 +4,7 @@
 #include "robot_action.h"
 #include "usart.h"
 #include <string.h>
+#include "gps.h"
 
 void is3288CmdLost(int *heart_count, int* flag);
 void checkRK3288Msg(void);
