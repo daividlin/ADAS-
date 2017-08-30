@@ -3,6 +3,13 @@
 
 extern TaskHandle_t mainTaskHandle;
 
+//************************************
+// 函数:    mainTask
+// 返回值:   void
+// 描述:初始化外设，建立其他任务，删除本任务
+// 参数列表: void * pvPara
+//作者：LIN.HRG
+//************************************
 void mainTask(void *pvPara)
 {
 	peripheralsUARTInit();

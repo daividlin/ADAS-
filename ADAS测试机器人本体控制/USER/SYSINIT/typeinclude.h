@@ -4,7 +4,6 @@
 
 #define PI 3.1415926535898
 
-
 typedef struct _ROBOT_PID_STRUCT_TYPE
 {
 	double p;
@@ -90,7 +89,6 @@ typedef struct _ERR_STRUCT_TYPE {
 }ERR_STRUCT_TYPE;
 //---------------------------------------------------
 
-
 typedef struct _INIT_STRUCT_TYPE
 {
 	double circle_ang, circle_x, circle_y, circle_r_sum, circle_center_x, circle_center_y, \
@@ -98,7 +96,6 @@ typedef struct _INIT_STRUCT_TYPE
 	short circle_xy_cnt, circle_ang_cnt, stage;
 
 }INIT_STRUCT_TYPE;
-
 
 typedef struct _MOTION_STRUCT_TYPE
 {
@@ -149,8 +146,6 @@ typedef union _UPLOG_UNION_TYPE
 	unsigned char c[4];
 }UPLOG_UNION_TYPE;
 
-
-
 typedef struct _CTRL_CMD_STRUCT_TYPE
 {
 	char header0;
@@ -176,6 +171,7 @@ typedef enum _BOOL
 	FALSE = 0,
 	TRUE = 1
 }BOOL;
+
 typedef enum _VALIDITY_ENUM_TYPE
 {
 	INVALID = 0,
@@ -189,7 +185,6 @@ typedef struct uart_struct
 	char rdata[20];
 	unsigned char olddata;
 }ROBOTUART;
-
 
 typedef struct uart_int_struct
 {
@@ -237,7 +232,6 @@ typedef enum _MOTOR_CAN_FUNCTION_CODE_ENUM_TYPE
 	_FUN_CODE_WR_CMD_WORD = 0X2B,
 	_FUN_CODE_WRANSWEROK_CMD_WORD = 0X2C,
 	_FUN_CODE_WRANSWERNG_CMD_WORD = 0X2D,
-
 }MOTOR_CAN_FUNCTION_CODE_ENUM_TYPE;
 
 
@@ -254,6 +248,21 @@ typedef enum _CN_REG_ADR
 	VELOCITY_ADR = 0X00,
 	TORQUE_ADR = 0X01
 }CN_REG_ADR;
+
+typedef struct _CMD_SEND_DRIVER_STRUCT_TYPE
+{
+	u8 srcID;
+	u8 funcCode;
+    u16 reg;
+	u16 cmdL;
+	u16 cmdH;
+}CMD_SEND_DRIVER_STRUCT_TYPE;
+
+typedef union _CMD_SEND_DRIVER_UNION_TYPE
+{
+	CMD_SEND_DRIVER_STRUCT_TYPE cmdSrtuct;
+	u8 cmdByte[8];
+}CMD_SEND_DRIVER_UNION_TYPE;
 
 
 #endif // !_TYPE_INCLUDE_H

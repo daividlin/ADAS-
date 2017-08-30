@@ -1,22 +1,24 @@
 #ifndef __MY_CAN_H
 #define __MY_CAN_H 		
 
-#include "sys.h"	    
+#include "sys.h"	
+#include "typeinclude.h"
 //电机控制相关参数
 #define SPD_SET_LEN           8
 #define MOTORDRIVE_ID_LEFT         0x01
 #define MOTORDRIVE_ID_RIGHT        0x02
 
-#define MOTORDRIVE_CMD_SETVELOCITY           0x6f
-#define MOTORDRIVE_CMD_GETACTVELOCITY           0x3f
+#define MOTORDRIVE_CMD_SET_VELOCITY           0x6f
+#define MOTORDRIVE_CMD_GET_ACT_VELOCITY           0x3f
 #define MOTORDRIVE_CMD_ENABLE         0x15
 #define MOTORDRIVE_CMD_DISABLE  0x16
-#define MOTORDRIVE_CMD_CLEARERROR  0x17
-#define MOTORDRIVE_CMD_BRAKEOPERATION  0x1e
-#define MOTORDRIVE_CMD_SETPARAM 0x96
+#define MOTORDRIVE_CMD_CLEAR_ERROR  0x17
+#define MOTORDRIVE_CMD_BRAKE_OPERATION  0x1e
+#define MOTORDRIVE_CMD_SET_PARAM 0x96
 
 #define MOTORDRIVE_CMD_BRAKEOPERATION_ENABLE 1  
 #define MOTORDRIVE_CMD_BRAKEOPERATION_DISABLE 0
+
 #define MOTORDRIVE_PARAM_NUN_LIFEGUARD_MODE 276
 #define MOTORDRIVE_PARAM_VALUE_LIFEGUARD_MODE 9999
 #define MOTORDRIVE_PARAM_NUN_LIFEGUARD_TIME 274
@@ -39,7 +41,8 @@ unsigned char getWheelMotorSpeed2Buf(void);
 unsigned char EnableMotorDrive(unsigned char addr);
 unsigned char set_param_motec(unsigned char addr,unsigned short param_num,unsigned short param_value);//spd:rpm
 unsigned char send_cmd_motordrive(unsigned char addr,unsigned char cmd_id,unsigned short sdata1,unsigned short sdata2);
-
+void getMotorVelo(u8 adr);
+void syntronMotorVeloSet(u8 adr, int spd);
 #endif
 
 

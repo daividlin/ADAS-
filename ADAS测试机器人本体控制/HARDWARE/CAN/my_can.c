@@ -17,7 +17,7 @@ void CAN1_RX0_IRQHandler(void)
 	unsigned int id;
 	unsigned char ide, rtr, len;
 	CAN1_Rx_Msg(0, &id, &ide, &rtr, &len, rxbuf);
-	if ((len == 8) && (rxbuf[1] == MOTORDRIVE_CMD_GETACTVELOCITY))
+	if ((len == 8) && (rxbuf[1] == MOTORDRIVE_CMD_GET_ACT_VELOCITY))
 	{
 		gHalData.WheelHal[id - 1].FbVel = (double)((int)(((uint32_t)rxbuf[5]) + ((uint32_t)rxbuf[4] << 8) + ((uint32_t)rxbuf[3] << 16) + ((uint32_t)rxbuf[2] << 24))) / 10.0f;
 	}
@@ -36,7 +36,7 @@ unsigned char ZDSetMotorSpd(unsigned char addr, int spd)//spd:rpm
 	unsigned short check;
 	spd = spd * 10;
 	buff[0] = addr;
-	buff[1] = (unsigned char)(MOTORDRIVE_CMD_SETVELOCITY & 0xff);
+	buff[1] = (unsigned char)(MOTORDRIVE_CMD_SET_VELOCITY & 0xff);
 	buff[2] = (unsigned char)((spd & 0xff000000) >> 24);
 	buff[3] = (unsigned char)((spd & 0x00ff0000) >> 16);
 	buff[4] = (unsigned char)((spd & 0x0000ff00) >> 8);
@@ -50,6 +50,18 @@ unsigned char ZDSetMotorSpd(unsigned char addr, int spd)//spd:rpm
 	return 0;
 }
 
+void syntronMotorVeloSet(u8 adr, int spd)
+{
+	CMD_SEND_DRIVER_UNION_TYPE cmd;
+	u16 addr = adr + 0x100;
+	cmd.cmdSrtuct.srcID = adr << 4;
+    cmd.cmdSrtuct.reg = 0;
+	cmd.cmdSrtuct.funcCode = _FUN_CODE_WR_CMD_BYTE;
+	cmd.cmdSrtuct.cmdL = (spd<<8) | (spd>>8);
+    cmd.cmdSrtuct.cmdH = 0;
+	CAN1_Send_Msg(cmd.cmdByte, 8 , addr);
+}
+
 /*
 函数功能：设定motec 参数表参数
 参数    ：id  设备节点
@@ -61,7 +73,7 @@ unsigned char set_param_motec(unsigned char addr, unsigned short param_num, unsi
 	unsigned short check;
 
 	buff[0] = addr;
-	buff[1] = (unsigned char)(MOTORDRIVE_CMD_SETPARAM & 0xff);
+	buff[1] = (unsigned char)(MOTORDRIVE_CMD_SET_PARAM & 0xff);
 	buff[2] = (unsigned char)((param_num & 0xff00) >> 8);
 	buff[3] = (unsigned char)(param_num & 0x00ff);
 	buff[4] = (unsigned char)((param_value & 0xff00) >> 8);
@@ -112,7 +124,7 @@ unsigned char getMotorSpeed_ZD(unsigned char addr)//spd:rpm
 	unsigned char buff[8];
 	unsigned short check;
 	buff[0] = addr;
-	buff[1] = (unsigned char)(MOTORDRIVE_CMD_GETACTVELOCITY & 0xff);
+	buff[1] = (unsigned char)(MOTORDRIVE_CMD_GET_ACT_VELOCITY & 0xff);
 	buff[2] = (unsigned char)(0x00);
 	buff[3] = (unsigned char)(0x00);
 	buff[4] = (unsigned char)(0x00);
@@ -124,6 +136,18 @@ unsigned char getMotorSpeed_ZD(unsigned char addr)//spd:rpm
 	buff[7] = (unsigned char)(check & 0x00ff);
 	CAN1_Send_Msg(buff, SPD_SET_LEN, addr);
 	return 0;
+}
+
+void getMotorVelo(u8 adr)
+{
+	CMD_SEND_DRIVER_UNION_TYPE cmd;
+	u16 addr = adr + 0x100;
+	cmd.cmdSrtuct.funcCode = _FUN_CODE_RD_STATUS_BYTE;
+	cmd.cmdSrtuct.srcID = adr << 4;
+    cmd.cmdSrtuct.reg = 0x00;
+	cmd.cmdSrtuct.cmdL = 0x00;
+	cmd.cmdSrtuct.cmdH = 0x00;
+	CAN1_Send_Msg(cmd.cmdByte, 8, addr);
 }
 
 /*
