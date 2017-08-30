@@ -1,6 +1,6 @@
 Dependencies for Project 'ADAS', Target 'Target 1': (DO NOT MODIFY !)
 F (.\startup_stm32f40_41xxx.s)(0x599D19C5)(--cpu Cortex-M4.fp -g --apcs=interwork --pd "__MICROLIB SETA 1" -I D:\Keil4.70\ARM\RV31\INC -I D:\Keil4.70\ARM\CMSIS\Include --list "..\OBJ\startup_stm32f40_41xxx.lst" --xref -o "..\OBJ\startup_stm32f40_41xxx.o" --depend "..\OBJ\startup_stm32f40_41xxx.d")
-F (.\main.c)(0x59A370E6)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USMART -I..\HARDWARE\LED -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\CAN -I..\HARDWARE\MPU6050 -I..\HARDWARE\MPU6050\eMPL -I.\SYSINIT -I..\FreeRTOS\include -I.\ALG -I..\USER -I..\HARDWARE\IIC -I..\HARDWARE\GPS -I D:\Keil4.70\ARM\RV31\INC -I D:\Keil4.70\ARM\CMSIS\Include -DSTM32F40_41xxx -o "..\OBJ\main.o" --omf_browse "..\OBJ\main.crf" --depend "..\OBJ\main.d")
+F (.\main.c)(0x59A4C4E5)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USMART -I..\HARDWARE\LED -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\CAN -I..\HARDWARE\MPU6050 -I..\HARDWARE\MPU6050\eMPL -I.\SYSINIT -I..\FreeRTOS\include -I.\ALG -I..\USER -I..\HARDWARE\IIC -I..\HARDWARE\GPS -I D:\Keil4.70\ARM\RV31\INC -I D:\Keil4.70\ARM\CMSIS\Include -DSTM32F40_41xxx -o "..\OBJ\main.o" --omf_browse "..\OBJ\main.crf" --depend "..\OBJ\main.d")
 I (.\ALG\mainloop.h)(0x59A3BA15)
 I (.\SYSINIT\sysinit.h)(0x599E6679)
 I (..\SYSTEM\delay\delay.h)(0x59A3A28D)
@@ -19,7 +19,7 @@ I (..\HARDWARE\LED\led.h)(0x59A3C027)
 I (..\HARDWARE\KEY\key.h)(0x59A3C056)
 I (..\HARDWARE\CAN\my_can.h)(0x59A3C376)
 I (..\USER\robot_action.h)(0x59A3D519)
-I (.\SYSINIT\typeinclude.h)(0x59A3CA35)
+I (.\SYSINIT\typeinclude.h)(0x59A64DEB)
 I (..\USER\basicfunc.h)(0x59A3A7AE)
 I (..\HARDWARE\CAN\canopen.h)(0x58C8DFFE)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\math.h)(0x50F96150)
@@ -87,7 +87,7 @@ I (D:\Keil4.70\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
 I (..\SYSTEM\delay\delay.h)(0x59A3A28D)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
 I (..\USMART\..\USER\robot_action.h)(0x59A3D519)
-I (.\SYSINIT\typeinclude.h)(0x59A3CA35)
+I (.\SYSINIT\typeinclude.h)(0x59A64DEB)
 I (..\USMART\..\USER\basicfunc.h)(0x59A3A7AE)
 I (..\HARDWARE\CAN\canopen.h)(0x58C8DFFE)
 I (..\HARDWARE\CAN\my_can.h)(0x59A3C376)
@@ -113,7 +113,7 @@ I (..\FreeRTOS\include\list.h)(0x573F3A16)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\ctype.h)(0x50F96150)
 F (.\robot_action.c)(0x59A3D6F5)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USMART -I..\HARDWARE\LED -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\CAN -I..\HARDWARE\MPU6050 -I..\HARDWARE\MPU6050\eMPL -I.\SYSINIT -I..\FreeRTOS\include -I.\ALG -I..\USER -I..\HARDWARE\IIC -I..\HARDWARE\GPS -I D:\Keil4.70\ARM\RV31\INC -I D:\Keil4.70\ARM\CMSIS\Include -DSTM32F40_41xxx -o "..\OBJ\robot_action.o" --omf_browse "..\OBJ\robot_action.crf" --depend "..\OBJ\robot_action.d")
 I (robot_action.h)(0x59A3D519)
-I (.\SYSINIT\typeinclude.h)(0x59A3CA35)
+I (.\SYSINIT\typeinclude.h)(0x59A64DEB)
 I (..\SYSTEM\sys\stm32f4xx.h)(0x599E5D9D)
 I (D:\Keil4.70\ARM\CMSIS\Include\core_cm4.h)(0x50875B7E)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
@@ -160,7 +160,7 @@ I (D:\Keil4.70\ARM\CMSIS\Include\core_cmFunc.h)(0x50875B7E)
 I (D:\Keil4.70\ARM\CMSIS\Include\core_cm4_simd.h)(0x50875B7E)
 I (..\SYSTEM\sys\system_stm32f4xx.h)(0x53DBA49A)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
-I (.\SYSINIT\typeinclude.h)(0x59A3CA35)
+I (.\SYSINIT\typeinclude.h)(0x59A64DEB)
 I (..\SYSTEM\delay\delay.h)(0x59A3A28D)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\math.h)(0x50F96150)
@@ -248,7 +248,7 @@ I (D:\Keil4.70\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
 I (..\SYSTEM\delay\delay.h)(0x59A3A28D)
 F (..\HARDWARE\GPS\gps.c)(0x59A3CB65)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USMART -I..\HARDWARE\LED -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\CAN -I..\HARDWARE\MPU6050 -I..\HARDWARE\MPU6050\eMPL -I.\SYSINIT -I..\FreeRTOS\include -I.\ALG -I..\USER -I..\HARDWARE\IIC -I..\HARDWARE\GPS -I D:\Keil4.70\ARM\RV31\INC -I D:\Keil4.70\ARM\CMSIS\Include -DSTM32F40_41xxx -o "..\OBJ\gps.o" --omf_browse "..\OBJ\gps.crf" --depend "..\OBJ\gps.d")
 I (..\USMART\..\USER\robot_action.h)(0x59A3D519)
-I (.\SYSINIT\typeinclude.h)(0x59A3CA35)
+I (.\SYSINIT\typeinclude.h)(0x59A64DEB)
 I (..\SYSTEM\sys\stm32f4xx.h)(0x599E5D9D)
 I (D:\Keil4.70\ARM\CMSIS\Include\core_cm4.h)(0x50875B7E)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
@@ -285,7 +285,7 @@ I (..\FreeRTOS\include\task.h)(0x573F3A16)
 I (..\FreeRTOS\include\list.h)(0x573F3A16)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\stdlib.h)(0x50F96150)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\ctype.h)(0x50F96150)
-F (..\HARDWARE\CAN\my_can.c)(0x59A3CBD9)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USMART -I..\HARDWARE\LED -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\CAN -I..\HARDWARE\MPU6050 -I..\HARDWARE\MPU6050\eMPL -I.\SYSINIT -I..\FreeRTOS\include -I.\ALG -I..\USER -I..\HARDWARE\IIC -I..\HARDWARE\GPS -I D:\Keil4.70\ARM\RV31\INC -I D:\Keil4.70\ARM\CMSIS\Include -DSTM32F40_41xxx -o "..\OBJ\my_can.o" --omf_browse "..\OBJ\my_can.crf" --depend "..\OBJ\my_can.d")
+F (..\HARDWARE\CAN\my_can.c)(0x59A4F719)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USMART -I..\HARDWARE\LED -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\CAN -I..\HARDWARE\MPU6050 -I..\HARDWARE\MPU6050\eMPL -I.\SYSINIT -I..\FreeRTOS\include -I.\ALG -I..\USER -I..\HARDWARE\IIC -I..\HARDWARE\GPS -I D:\Keil4.70\ARM\RV31\INC -I D:\Keil4.70\ARM\CMSIS\Include -DSTM32F40_41xxx -o "..\OBJ\my_can.o" --omf_browse "..\OBJ\my_can.crf" --depend "..\OBJ\my_can.d")
 I (..\HARDWARE\CAN\my_can.h)(0x59A3C376)
 I (..\SYSTEM\sys\sys.h)(0x59A3C0BA)
 I (..\SYSTEM\sys\stm32f4xx.h)(0x599E5D9D)
@@ -538,7 +538,7 @@ I (..\HARDWARE\LED\led.h)(0x59A3C027)
 I (..\HARDWARE\KEY\key.h)(0x59A3C056)
 I (..\HARDWARE\CAN\my_can.h)(0x59A3C376)
 I (..\USER\robot_action.h)(0x59A3D519)
-I (.\SYSINIT\typeinclude.h)(0x59A3CA35)
+I (.\SYSINIT\typeinclude.h)(0x59A64DEB)
 I (..\USER\basicfunc.h)(0x59A3A7AE)
 I (..\HARDWARE\CAN\canopen.h)(0x58C8DFFE)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\math.h)(0x50F96150)
@@ -566,7 +566,7 @@ I (..\FreeRTOS\include\event_groups.h)(0x573F3A16)
 F (.\ALG\Comm2Controller.c)(0x59A3A764)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USMART -I..\HARDWARE\LED -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\CAN -I..\HARDWARE\MPU6050 -I..\HARDWARE\MPU6050\eMPL -I.\SYSINIT -I..\FreeRTOS\include -I.\ALG -I..\USER -I..\HARDWARE\IIC -I..\HARDWARE\GPS -I D:\Keil4.70\ARM\RV31\INC -I D:\Keil4.70\ARM\CMSIS\Include -DSTM32F40_41xxx -o "..\OBJ\comm2controller.o" --omf_browse "..\OBJ\comm2controller.crf" --depend "..\OBJ\comm2controller.d")
 I (ALG\Comm2Controller.h)(0x59A3C5B9)
 I (..\USER\robot_action.h)(0x59A3D519)
-I (.\SYSINIT\typeinclude.h)(0x59A3CA35)
+I (.\SYSINIT\typeinclude.h)(0x59A64DEB)
 I (..\SYSTEM\sys\stm32f4xx.h)(0x599E5D9D)
 I (D:\Keil4.70\ARM\CMSIS\Include\core_cm4.h)(0x50875B7E)
 I (D:\Keil4.70\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)

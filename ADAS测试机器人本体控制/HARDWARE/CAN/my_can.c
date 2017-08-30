@@ -17,8 +17,6 @@ void CAN1_RX0_IRQHandler(void)
 	unsigned int id;
 	unsigned char ide, rtr, len;
 	CAN1_Rx_Msg(0, &id, &ide, &rtr, &len, rxbuf);
-
-
 	if ((len == 8) && (rxbuf[1] == MOTORDRIVE_CMD_GETACTVELOCITY))
 	{
 		gHalData.WheelHal[id - 1].FbVel = (double)((int)(((uint32_t)rxbuf[5]) + ((uint32_t)rxbuf[4] << 8) + ((uint32_t)rxbuf[3] << 16) + ((uint32_t)rxbuf[2] << 24))) / 10.0f;
@@ -106,6 +104,9 @@ unsigned char send_cmd_motordrive(unsigned char addr, unsigned char cmd_id, unsi
 函数功能：获取电机转速rpm
 参数    ：id  设备节点
 */
+
+
+
 unsigned char getMotorSpeed_ZD(unsigned char addr)//spd:rpm
 {
 	unsigned char buff[8];
