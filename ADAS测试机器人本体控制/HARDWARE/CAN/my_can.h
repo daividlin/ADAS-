@@ -13,6 +13,7 @@
 #define MOTORDRIVE_CMD_ENABLE         0x15
 #define MOTORDRIVE_CMD_DISABLE  0x16
 #define MOTORDRIVE_CMD_CLEAR_ERROR  0x17
+
 #define MOTORDRIVE_CMD_BRAKE_OPERATION  0x1e
 #define MOTORDRIVE_CMD_SET_PARAM 0x96
 
@@ -33,9 +34,9 @@ u8 CAN1_Tx_Staus(u8 mbox);  							//返回发送状态
 unsigned char CAN1_Receive_Msg(unsigned char *buf);							//接收数据
 unsigned char CAN1_Send_Msg(unsigned char * msg,unsigned char len,unsigned int id);						//发送数据
 void CAN1_Rx_Msg(unsigned char fifox,unsigned int *id,unsigned char *ide,unsigned char *rtr,unsigned char *len,unsigned char *dat);//接收数据
-unsigned char ZDCanSend(unsigned char len,unsigned char addr,unsigned short cmdfunc,unsigned char *data);
-unsigned char ZDSetMotorSpd(unsigned char addr,int spd);//spd:rpm
-unsigned char getMotorSpeed_ZD(unsigned char addr);//spd:rpm
+unsigned char MOTECCanSend(unsigned char len,unsigned char addr,unsigned short cmdfunc,unsigned char *data);
+unsigned char MOTECSetMotorSpd(unsigned char addr,int spd);//spd:rpm
+unsigned char getMotorSpeed_MOTEC(unsigned char addr);//spd:rpm
 unsigned char wheelMotorSpdSet(int speedLeft,int speedRight);
 unsigned char getWheelMotorSpeed2Buf(void);
 unsigned char EnableMotorDrive(unsigned char addr);

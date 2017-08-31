@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2F91FE68-F5D2-4C86-9323-882D64B61895}</ProjectGuid>
+    <RootNamespace>Project2</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>ADAS测试机器人本体控制</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>USE_STDPERIPH_DRIVER;STM32F10X_HD;__CC_ARM</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      <IncludePath>.\FreeRTOS\include;.\FreeRTOS\portable\RVDS\ARM7_LPC21xx;.\FreeRTOS\portable\RVDS\ARM_CA9;.\FreeRTOS\portable\RVDS\ARM_CM0;.\FreeRTOS\portable\RVDS\ARM_CM3;.\FreeRTOS\portable\RVDS\ARM_CM4_MPU;.\FreeRTOS\portable\RVDS\ARM_CM7\r0p1;.\HARDWARE\CAN;.\HARDWARE\GPS;.\HARDWARE\IIC;.\HARDWARE\joystick;.\HARDWARE\KEY;.\HARDWARE\LED;.\HARDWARE\MPU6050;.\HARDWARE\MPU6050\eMPL;.\HARDWARE\TIMER;.\SYSTEM\delay;.\SYSTEM\sys;.\SYSTEM\usart;.\USER;.\USER\ALG;.\USER\SYSINIT;D:\Program Files\Keil_v5\ARM\ARMCC\include</IncludePath>
+      <ReferencePath />
+      <LibraryPath />
+      <LibraryWPath />
+      <ExcludePath />
+      <SourcePath />
+    </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="FreeRTOS\croutine.c" />
+    <ClCompile Include="FreeRTOS\event_groups.c" />
+    <ClCompile Include="FreeRTOS\list.c" />
+    <ClCompile Include="FreeRTOS\port.c" />
+    <ClCompile Include="FreeRTOS\queue.c" />
+    <ClCompile Include="FreeRTOS\tasks.c" />
+    <ClCompile Include="FreeRTOS\timers.c" />
+    <ClInclude Include="FreeRTOS\include\croutine.h" />
+    <ClInclude Include="FreeRTOS\include\deprecated_definitions.h" />
+    <ClInclude Include="FreeRTOS\include\event_groups.h" />
+    <ClInclude Include="FreeRTOS\include\FreeRTOS.h" />
+    <ClInclude Include="FreeRTOS\include\FreeRTOSConfig.h" />
+    <ClInclude Include="FreeRTOS\include\list.h" />
+    <ClInclude Include="FreeRTOS\include\mpu_prototypes.h" />
+    <ClInclude Include="FreeRTOS\include\mpu_wrappers.h" />
+    <ClInclude Include="FreeRTOS\include\portable.h" />
+    <ClInclude Include="FreeRTOS\include\portmacro.h" />
+    <ClInclude Include="FreeRTOS\include\projdefs.h" />
+    <ClInclude Include="FreeRTOS\include\queue.h" />
+    <ClInclude Include="FreeRTOS\include\semphr.h" />
+    <ClInclude Include="FreeRTOS\include\StackMacros.h" />
+    <ClInclude Include="FreeRTOS\include\task.h" />
+    <ClInclude Include="FreeRTOS\include\timers.h" />
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_1.c" />
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_2.c" />
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_3.c" />
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_4.c" />
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_5.c" />
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM7_LPC21xx\port.c" />
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM7_LPC21xx\portASM.s" />
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM7_LPC21xx\portmacro.h" />
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CA9\port.c" />
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CA9\portASM.s" />
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CA9\portmacro.h" />
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CM0\port.c" />
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CM0\portmacro.h" />
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CM3\port.c" />
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CM3\portmacro.h" />
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CM4_MPU\port.c" />
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CM4_MPU\portmacro.h" />
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CM7\r0p1\port.c" />
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CM7\r0p1\portmacro.h" />
+    <ClCompile Include="HARDWARE\CAN\canopen.c" />
+    <ClCompile Include="HARDWARE\CAN\my_can.c" />
+    <ClInclude Include="HARDWARE\CAN\canopen.h" />
+    <ClInclude Include="HARDWARE\CAN\my_can.h" />
+    <ClCompile Include="HARDWARE\GPS\gps.c" />
+    <ClInclude Include="HARDWARE\GPS\gps.h" />
+    <ClCompile Include="HARDWARE\IIC\myiic.c" />
+    <ClInclude Include="HARDWARE\IIC\myiic.h" />
+    <ClCompile Include="HARDWARE\joystick\joystick.c" />
+    <ClInclude Include="HARDWARE\joystick\joystick.h" />
+    <ClCompile Include="HARDWARE\KEY\key.c" />
+    <ClInclude Include="HARDWARE\KEY\key.h" />
+    <ClCompile Include="HARDWARE\LED\led.c" />
+    <ClInclude Include="HARDWARE\LED\led.h" />
+    <ClCompile Include="HARDWARE\MPU6050\mpu6050.c" />
+    <ClInclude Include="HARDWARE\MPU6050\mpu6050.h" />
+    <ClCompile Include="HARDWARE\MPU6050\eMPL\inv_mpu.c" />
+    <ClCompile Include="HARDWARE\MPU6050\eMPL\inv_mpu_dmp_motion_driver.c" />
+    <ClInclude Include="HARDWARE\MPU6050\eMPL\dmpKey.h" />
+    <ClInclude Include="HARDWARE\MPU6050\eMPL\dmpmap.h" />
+    <ClInclude Include="HARDWARE\MPU6050\eMPL\inv_mpu.h" />
+    <ClInclude Include="HARDWARE\MPU6050\eMPL\inv_mpu_dmp_motion_driver.h" />
+    <ClCompile Include="HARDWARE\TIMER\timer.c" />
+    <ClInclude Include="HARDWARE\TIMER\timer.h" />
+    <ClCompile Include="SYSTEM\delay\delay.c" />
+    <ClInclude Include="SYSTEM\delay\delay.h" />
+    <ClCompile Include="SYSTEM\sys\sys.c" />
+    <ClInclude Include="SYSTEM\sys\stm32f4xx.h" />
+    <ClInclude Include="SYSTEM\sys\sys.h" />
+    <ClInclude Include="SYSTEM\sys\system_stm32f4xx.h" />
+    <ClCompile Include="SYSTEM\usart\usart.c" />
+    <ClInclude Include="SYSTEM\usart\usart.h" />
+    <ClCompile Include="USER\basicfunc.c" />
+    <ClCompile Include="USER\main.c" />
+    <ClCompile Include="USER\robot_action.c" />
+    <ClCompile Include="USER\startup_stm32f40_41xxx.s" />
+    <ClInclude Include="USER\basicfunc.h" />
+    <ClInclude Include="USER\robot_action.h" />
+    <ClCompile Include="USER\ALG\Comm2Controller.c" />
+    <ClCompile Include="USER\ALG\mainloop.c" />
+    <ClInclude Include="USER\ALG\Comm2Controller.h" />
+    <ClInclude Include="USER\ALG\mainloop.h" />
+    <ClInclude Include="USER\ALG\taskconfigs.h" />
+    <ClCompile Include="USER\SYSINIT\sysinit.c" />
+    <ClInclude Include="USER\SYSINIT\sysinit.h" />
+    <ClInclude Include="USER\SYSINIT\typeinclude.h" />
+  </ItemGroup>
+  </Project>

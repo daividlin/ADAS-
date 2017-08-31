@@ -30,7 +30,7 @@ void CAN1_RX0_IRQHandler(void)
 参数    ：id  设备节点
 		  spd 速度值
 */
-unsigned char ZDSetMotorSpd(unsigned char addr, int spd)//spd:rpm
+unsigned char MOTECSetMotorSpd(unsigned char addr, int spd)//spd:rpm
 {
 	unsigned char buff[8];
 	unsigned short check;
@@ -119,7 +119,7 @@ unsigned char send_cmd_motordrive(unsigned char addr, unsigned char cmd_id, unsi
 
 
 
-unsigned char getMotorSpeed_ZD(unsigned char addr)//spd:rpm
+unsigned char getMotorSpeed_MOTEC(unsigned char addr)//spd:rpm
 {
 	unsigned char buff[8];
 	unsigned short check;
@@ -180,10 +180,10 @@ unsigned char EnableMotorDrive(unsigned char addr)//spd:rpm
 unsigned char wheelMotorSpdSet(int speedLeft, int speedRight)
 {
 	delay_us(100);
-	ZDSetMotorSpd(MOTORDRIVE_ID_LEFT, speedLeft);
+	MOTECSetMotorSpd(MOTORDRIVE_ID_LEFT, speedLeft);
 	delay_us(100);
 	//	delay_ms(1);
-	ZDSetMotorSpd(MOTORDRIVE_ID_RIGHT, speedRight);
+	MOTECSetMotorSpd(MOTORDRIVE_ID_RIGHT, speedRight);
 	//	delay_ms(1);	
 	delay_us(100);
 	return 0;
@@ -194,10 +194,10 @@ unsigned char wheelMotorSpdSet(int speedLeft, int speedRight)
 */
 unsigned char getWheelMotorSpeed2Buf(void)
 {
-	getMotorSpeed_ZD(MOTORDRIVE_ID_LEFT);
+	getMotorSpeed_MOTEC(MOTORDRIVE_ID_LEFT);
 	//	delay_ms(1);
 	delay_us(100);
-	getMotorSpeed_ZD(MOTORDRIVE_ID_RIGHT);
+	getMotorSpeed_MOTEC(MOTORDRIVE_ID_RIGHT);
 	//	delay_ms(1);	
 	delay_us(100);
 	return 0;
@@ -277,7 +277,7 @@ u8 CAN1_Mode_Init(u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode)
 	return 0;
 }
 
-unsigned char ZDCanSend(unsigned char len, unsigned char addr, unsigned short cmdfunc, unsigned char *data)
+unsigned char MOTECCanSend(unsigned char len, unsigned char addr, unsigned short cmdfunc, unsigned char *data)
 {
 	unsigned char buff[8];
 	unsigned int id = (unsigned int)addr;

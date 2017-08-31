@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="FreeRTOS" />
+    <Filter Include="FreeRTOS\include" />
+    <Filter Include="FreeRTOS\portable" />
+    <Filter Include="FreeRTOS\portable\MemMang" />
+    <Filter Include="FreeRTOS\portable\RVDS" />
+    <Filter Include="FreeRTOS\portable\RVDS\ARM7_LPC21xx" />
+    <Filter Include="FreeRTOS\portable\RVDS\ARM_CA9" />
+    <Filter Include="FreeRTOS\portable\RVDS\ARM_CM0" />
+    <Filter Include="FreeRTOS\portable\RVDS\ARM_CM3" />
+    <Filter Include="FreeRTOS\portable\RVDS\ARM_CM4_MPU" />
+    <Filter Include="FreeRTOS\portable\RVDS\ARM_CM7" />
+    <Filter Include="FreeRTOS\portable\RVDS\ARM_CM7\r0p1" />
+    <Filter Include="HARDWARE" />
+    <Filter Include="HARDWARE\CAN" />
+    <Filter Include="HARDWARE\GPS" />
+    <Filter Include="HARDWARE\IIC" />
+    <Filter Include="HARDWARE\joystick" />
+    <Filter Include="HARDWARE\KEY" />
+    <Filter Include="HARDWARE\LED" />
+    <Filter Include="HARDWARE\MPU6050" />
+    <Filter Include="HARDWARE\MPU6050\eMPL" />
+    <Filter Include="HARDWARE\TIMER" />
+    <Filter Include="SYSTEM" />
+    <Filter Include="SYSTEM\delay" />
+    <Filter Include="SYSTEM\sys" />
+    <Filter Include="SYSTEM\usart" />
+    <Filter Include="USER" />
+    <Filter Include="USER\ALG" />
+    <Filter Include="USER\SYSINIT" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FreeRTOS\croutine.c">
+    <Filter>FreeRTOS</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\event_groups.c">
+    <Filter>FreeRTOS</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\list.c">
+    <Filter>FreeRTOS</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\port.c">
+    <Filter>FreeRTOS</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\queue.c">
+    <Filter>FreeRTOS</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\tasks.c">
+    <Filter>FreeRTOS</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\timers.c">
+    <Filter>FreeRTOS</Filter>
+    </ClCompile>
+    <ClInclude Include="FreeRTOS\include\croutine.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\deprecated_definitions.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\event_groups.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\FreeRTOS.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\FreeRTOSConfig.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\list.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\mpu_prototypes.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\mpu_wrappers.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\portable.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\portmacro.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\projdefs.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\queue.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\semphr.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\StackMacros.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\task.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOS\include\timers.h">
+    <Filter>FreeRTOS\include</Filter>
+    </ClInclude>
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_1.c">
+    <Filter>FreeRTOS\portable\MemMang</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_2.c">
+    <Filter>FreeRTOS\portable\MemMang</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_3.c">
+    <Filter>FreeRTOS\portable\MemMang</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_4.c">
+    <Filter>FreeRTOS\portable\MemMang</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\portable\MemMang\heap_5.c">
+    <Filter>FreeRTOS\portable\MemMang</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM7_LPC21xx\port.c">
+    <Filter>FreeRTOS\portable\RVDS\ARM7_LPC21xx</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM7_LPC21xx\portASM.s">
+    <Filter>FreeRTOS\portable\RVDS\ARM7_LPC21xx</Filter>
+    </ClCompile>
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM7_LPC21xx\portmacro.h">
+    <Filter>FreeRTOS\portable\RVDS\ARM7_LPC21xx</Filter>
+    </ClInclude>
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CA9\port.c">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CA9</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CA9\portASM.s">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CA9</Filter>
+    </ClCompile>
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CA9\portmacro.h">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CA9</Filter>
+    </ClInclude>
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CM0\port.c">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CM0</Filter>
+    </ClCompile>
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CM0\portmacro.h">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CM0</Filter>
+    </ClInclude>
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CM3\port.c">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CM3</Filter>
+    </ClCompile>
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CM3\portmacro.h">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CM3</Filter>
+    </ClInclude>
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CM4_MPU\port.c">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CM4_MPU</Filter>
+    </ClCompile>
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CM4_MPU\portmacro.h">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CM4_MPU</Filter>
+    </ClInclude>
+    <ClCompile Include="FreeRTOS\portable\RVDS\ARM_CM7\r0p1\port.c">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CM7\r0p1</Filter>
+    </ClCompile>
+    <ClInclude Include="FreeRTOS\portable\RVDS\ARM_CM7\r0p1\portmacro.h">
+    <Filter>FreeRTOS\portable\RVDS\ARM_CM7\r0p1</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\CAN\canopen.c">
+    <Filter>HARDWARE\CAN</Filter>
+    </ClCompile>
+    <ClCompile Include="HARDWARE\CAN\my_can.c">
+    <Filter>HARDWARE\CAN</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\CAN\canopen.h">
+    <Filter>HARDWARE\CAN</Filter>
+    </ClInclude>
+    <ClInclude Include="HARDWARE\CAN\my_can.h">
+    <Filter>HARDWARE\CAN</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\GPS\gps.c">
+    <Filter>HARDWARE\GPS</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\GPS\gps.h">
+    <Filter>HARDWARE\GPS</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\IIC\myiic.c">
+    <Filter>HARDWARE\IIC</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\IIC\myiic.h">
+    <Filter>HARDWARE\IIC</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\joystick\joystick.c">
+    <Filter>HARDWARE\joystick</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\joystick\joystick.h">
+    <Filter>HARDWARE\joystick</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\KEY\key.c">
+    <Filter>HARDWARE\KEY</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\KEY\key.h">
+    <Filter>HARDWARE\KEY</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\LED\led.c">
+    <Filter>HARDWARE\LED</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\LED\led.h">
+    <Filter>HARDWARE\LED</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\MPU6050\mpu6050.c">
+    <Filter>HARDWARE\MPU6050</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\MPU6050\mpu6050.h">
+    <Filter>HARDWARE\MPU6050</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\MPU6050\eMPL\inv_mpu.c">
+    <Filter>HARDWARE\MPU6050\eMPL</Filter>
+    </ClCompile>
+    <ClCompile Include="HARDWARE\MPU6050\eMPL\inv_mpu_dmp_motion_driver.c">
+    <Filter>HARDWARE\MPU6050\eMPL</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\MPU6050\eMPL\dmpKey.h">
+    <Filter>HARDWARE\MPU6050\eMPL</Filter>
+    </ClInclude>
+    <ClInclude Include="HARDWARE\MPU6050\eMPL\dmpmap.h">
+    <Filter>HARDWARE\MPU6050\eMPL</Filter>
+    </ClInclude>
+    <ClInclude Include="HARDWARE\MPU6050\eMPL\inv_mpu.h">
+    <Filter>HARDWARE\MPU6050\eMPL</Filter>
+    </ClInclude>
+    <ClInclude Include="HARDWARE\MPU6050\eMPL\inv_mpu_dmp_motion_driver.h">
+    <Filter>HARDWARE\MPU6050\eMPL</Filter>
+    </ClInclude>
+    <ClCompile Include="HARDWARE\TIMER\timer.c">
+    <Filter>HARDWARE\TIMER</Filter>
+    </ClCompile>
+    <ClInclude Include="HARDWARE\TIMER\timer.h">
+    <Filter>HARDWARE\TIMER</Filter>
+    </ClInclude>
+    <ClCompile Include="SYSTEM\delay\delay.c">
+    <Filter>SYSTEM\delay</Filter>
+    </ClCompile>
+    <ClInclude Include="SYSTEM\delay\delay.h">
+    <Filter>SYSTEM\delay</Filter>
+    </ClInclude>
+    <ClCompile Include="SYSTEM\sys\sys.c">
+    <Filter>SYSTEM\sys</Filter>
+    </ClCompile>
+    <ClInclude Include="SYSTEM\sys\stm32f4xx.h">
+    <Filter>SYSTEM\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="SYSTEM\sys\sys.h">
+    <Filter>SYSTEM\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="SYSTEM\sys\system_stm32f4xx.h">
+    <Filter>SYSTEM\sys</Filter>
+    </ClInclude>
+    <ClCompile Include="SYSTEM\usart\usart.c">
+    <Filter>SYSTEM\usart</Filter>
+    </ClCompile>
+    <ClInclude Include="SYSTEM\usart\usart.h">
+    <Filter>SYSTEM\usart</Filter>
+    </ClInclude>
+    <ClCompile Include="USER\basicfunc.c">
+    <Filter>USER</Filter>
+    </ClCompile>
+    <ClCompile Include="USER\main.c">
+    <Filter>USER</Filter>
+    </ClCompile>
+    <ClCompile Include="USER\robot_action.c">
+    <Filter>USER</Filter>
+    </ClCompile>
+    <ClCompile Include="USER\startup_stm32f40_41xxx.s">
+    <Filter>USER</Filter>
+    </ClCompile>
+    <ClInclude Include="USER\basicfunc.h">
+    <Filter>USER</Filter>
+    </ClInclude>
+    <ClInclude Include="USER\robot_action.h">
+    <Filter>USER</Filter>
+    </ClInclude>
+    <ClCompile Include="USER\ALG\Comm2Controller.c">
+    <Filter>USER\ALG</Filter>
+    </ClCompile>
+    <ClCompile Include="USER\ALG\mainloop.c">
+    <Filter>USER\ALG</Filter>
+    </ClCompile>
+    <ClInclude Include="USER\ALG\Comm2Controller.h">
+    <Filter>USER\ALG</Filter>
+    </ClInclude>
+    <ClInclude Include="USER\ALG\mainloop.h">
+    <Filter>USER\ALG</Filter>
+    </ClInclude>
+    <ClInclude Include="USER\ALG\taskconfigs.h">
+    <Filter>USER\ALG</Filter>
+    </ClInclude>
+    <ClCompile Include="USER\SYSINIT\sysinit.c">
+    <Filter>USER\SYSINIT</Filter>
+    </ClCompile>
+    <ClInclude Include="USER\SYSINIT\sysinit.h">
+    <Filter>USER\SYSINIT</Filter>
+    </ClInclude>
+    <ClInclude Include="USER\SYSINIT\typeinclude.h">
+    <Filter>USER\SYSINIT</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
