@@ -39,7 +39,7 @@ extern char rxHuaweiCmd(void);
 static void Real_HUAWEI_Command_Process(void);
 extern void initGPSData(void);
 static char rx_gps(void);
-extern void OnButtonFansuan(double x, double y, double *B, double *L);
+extern void calcMotion2Location(double x, double y, double *B, double *L);
 
 
 #endif

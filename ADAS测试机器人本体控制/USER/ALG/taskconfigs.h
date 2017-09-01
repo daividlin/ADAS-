@@ -4,7 +4,6 @@
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "event_groups.h"
 
 #define eventMoveCrtlFlag	(1<<0)				//ÊÂ¼þÎ»
 #define eventAnalysisGpsFlag	(1<<1)
@@ -31,7 +30,6 @@ TaskHandle_t analysisGPSTHandle;
 #define _DEBUG_USART_SEND_pro 2
 TaskHandle_t debugUsartSendHandle;
 
-EventGroupHandle_t eventTaskRunFlags;
 
 #endif // !_TASK_CONFIG_H
 

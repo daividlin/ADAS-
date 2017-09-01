@@ -178,73 +178,6 @@ int gps_correct(void)
 	return re;
 }
 
-/********************************************************************************************************
-**函数信息 :int gps_compute_heading(void)
-**功能描述 :计算gps航迹角度。
-**输入参数 :
-**输出参数 :
-*********************************************************************************************************/
-/*
-int gps_compute_heading(void)
-{
-	int re = 0, i = 0;
-
-	//////////////////////////gps坐标缓存//////////////////////////////////////////////////////////////////
-	if (robot_motion.type == SUB_MOVE && gps.flag_confidence == 1 && (fabs(control.target_v) > 0.3))
-	{
-		for (i = 1; i < 6; i++)
-		{
-			gps.xy[i - 1][XX] = gps.xy[i][XX];
-			gps.xy[i - 1][YY] = gps.xy[i][YY];
-		}
-		gps.xy[5][XX] = gps.x;
-		gps.xy[5][YY] = gps.y;
-	}
-	else
-	{
-		for (i = 0; i < 6; i++)
-		{
-			gps.xy[i][XX] = 0;
-			gps.xy[i][YY] = 0;
-		}
-	}
-	//////////////////////////gps角度计算,50cm计算一次////////////////////////////////////////////////////////////////////				
-
-	if ((gps.xy[0][XX] != 0) && (gps.xy[0][YY] != 0))
-	{
-		gps.preheading = gps.heading;
-		gps.heading = atan2(gps.xy[5][YY] - gps.xy[0][YY], gps.xy[5][XX] - gps.xy[0][XX]);
-		gps.headingspd = gps.heading - gps.preheading;
-	}
-	////////////////////////////////角度置信/////////////////////////////////////////////////////////								
-
-	if ((gps.xy[0][XX] != 0) && (gps.xy[0][YY] != 0) && gps.flag_confidence == 1 && gps.preheading != gps.heading
-		&& gps.preheading != 0 && gps.heading != 0 && fabs(gps.headingspd) < 5.0*PI / 180.0 && (fabs(control.target_v) == control.max_v))
-	{
-		gps.flag_headingconfidence = 1;
-	}
-	else
-	{
-		gps.flag_headingconfidence = 0;
-	}
-	///////////////////////////////角度kalman滤波/////////////////////////////////////////////////////
-	if (gps.flag_headingconfidence == 1)
-	{
-		//				    gps.kalman_heading.z = gps.heading;
-		//					
-							  //需要解决角度在180度-180跳变影响滤波结果问题
-		gps.kalman_heading.x = gps.heading;
-
-	}
-	else
-	{
-		gps.kalman_heading.x = robot_motion.heading;//防止kalman滤波输出结果突变
-	}
-
-
-	return re;
-}
-*/
 
 /********************************************************************************************************
 **函数信息 :int Gauss_projection(double *x,double *y,double *z,double B,double L)
@@ -254,11 +187,8 @@ int gps_compute_heading(void)
 *********************************************************************************************************/
 int Gauss_projection(double *x, double *y, double *z, double B, double L)
 {
-
 	double a0, a2, a4, a6, a8;
-
 	double square_e1, c;
-
 	double p0 = 57.2957795130823208767981;
 	double t, k, V, N, p, dL, X;
 	double angle_to_radian = PI / 180.0;
@@ -311,7 +241,7 @@ int Gauss_projection(double *x, double *y, double *z, double B, double L)
 	return 0;
 }
 
-void OnButtonFansuan(double x, double y, double *B, double *L)
+void calcMotion2Location(double x, double y, double *B, double *L)
 {
 	double q0, q2, q4, q6, q8;
 	double square_e1, c;

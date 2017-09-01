@@ -6,7 +6,6 @@ extern CURVE_PLAN_STRUCT_TYPE lineplan;
 float fittingR;
 extern float signOMG;
 float tomg;
-float adjustr;
 
 MOTION_STRUCT_TYPE robot_motion;
 CTRL_STRUCT_TYPE control;
@@ -17,8 +16,8 @@ ERR_STRUCT_TYPE error;
 
 //------------------
 static u8 head;
-UARTINT uart2rk3288;//main
-UARTINT uart2cmdboard;//main
+USART_SEND_STRUCT_TYPE uart2rk3288;//main
+USART_SEND_STRUCT_TYPE uart2cmdboard;//main
 static u8 usart1_rdata[20], usart1_rlen = 0, usart1_ok = 1;
 static u16 rxcmd_cnt;
 
@@ -42,10 +41,11 @@ extern int initGyroData(void)
 
 extern void rxOMGMPU6050(void)
 {
-	short gyrox, gyroy, gyroz;	//陀螺仪原始数据
+	GYRO_VAL_STRUCT_TYPE gyro_val = { 0 ,0, 0 };
+//	short gyrox, gyroy, gyroz;	//陀螺仪原始数据
 	{
-		MPU_Get_Gyroscope(&gyrox, &gyroy, &gyroz);	//得到陀螺仪数据
-		gyro.omg_deg_raw = (double)(gyroz)*(-0.061)*1.0416;
+		MPU_Get_Gyroscope(&gyro_val.x, &gyro_val.y, &gyro_val.z);	//得到陀螺仪数据
+		gyro.omg_deg_raw = (double)(gyro_val.z)*(-0.061)*1.0416;
 		if (robot_motion.type == STOP)
 		{
 			gyro.flag_static = TRUE;
@@ -454,7 +454,6 @@ int action_moving1(void)
 		if (fabs(offset_r) < 0.0001) { int_r_offset = 0; }
 		else { int_r_offset += offset_r; }
 		adjust_r = offset_p*offset_r + offset_i*int_r_offset;
-		adjustr = r_robot;
 		r += adjust_r;
 		if (fabs(r) > 0.5)
 		{

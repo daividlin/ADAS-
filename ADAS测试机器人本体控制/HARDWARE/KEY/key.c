@@ -34,7 +34,7 @@ u8 KEY_Scan(u8 mode)
  	return 0;// 无按键按下
 }
 
-void GPIO_Config(void)
+void inputGPIOConfig(void)
 {
     KEY_Init();					 
 	RCC->AHB1ENR |= 1 << 0;     //使能PORTA时钟 

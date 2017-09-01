@@ -186,12 +186,12 @@ typedef struct uart_struct
 	unsigned char olddata;
 }ROBOTUART;
 
-typedef struct uart_int_struct
+typedef struct _USART_SEND_STRUCT_TYPE
 {
 	char tdata[100];
 	int length;
 	int sendno;
-}UARTINT;
+}USART_SEND_STRUCT_TYPE;
 
 typedef enum _MOTOR_CAN_FUNCTION_CODE_ENUM_TYPE
 {
@@ -263,6 +263,8 @@ typedef union _CMD_SEND_DRIVER_UNION_TYPE
 	CMD_SEND_DRIVER_STRUCT_TYPE cmdSrtuct;
 	u8 cmdByte[8];
 }CMD_SEND_DRIVER_UNION_TYPE;
+
+
 
 
 #endif // !_TYPE_INCLUDE_H

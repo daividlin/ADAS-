@@ -2,7 +2,7 @@
 
 //初始化PF9和PF10为输出口.并使能这两个口的时钟		    
 //LED IO初始化
-void LED_Init(void)
+void outPutGPIOConfig(void)
 {    	
 	brakeConfig();
 	RCC->AHB1ENR|=1<<5;//使能PORTF时钟 

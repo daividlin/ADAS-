@@ -28,7 +28,7 @@
 //CAN1接收RX0中断使能
 #define CAN1_RX0_INT_ENABLE			1		 			//0,不使能;1,使能.								    
 									 							 				    
-u8 CAN1_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);//CAN初始化
+u8 can1ModeConfig(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);//CAN初始化
 u8 CAN1_Tx_Msg(u32 id,u8 ide,u8 rtr,u8 len,u8 *dat);	//发送数据
 u8 CAN1_Tx_Staus(u8 mbox);  							//返回发送状态
 unsigned char CAN1_Receive_Msg(unsigned char *buf);							//接收数据

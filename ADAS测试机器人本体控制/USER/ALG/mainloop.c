@@ -14,13 +14,13 @@ void mainTask(void *pvPara)
 {
 	peripheralsUARTInit();
 	joyStickIOConfig();
-	LED_Init();	
-	GPIO_Config();
-	CAN1_Mode_Init(1, 6, 7, 6, 0);	//CAN初始化,波特率500Kbps 
+	outPutGPIOConfig();	
+	inputGPIOConfig();
+	can1ModeConfig(1, 6, 7, 6, 0);	//CAN初始化,波特率500Kbps 
 	vTaskDelay(2000);
-	MPU_Init();
+	mpuInit();
 	vTaskDelay(20);
-	mpu_dmp_init();
+	mpuDmpInit();
 	initGPSData();
 	initGyroData();
 	motorInit();
@@ -86,6 +86,34 @@ void checkHuaweiCmdTask(void *pvPara)
 }
 
 
+void calcMsg2Huawei(void)
+{
+	global_px = -robot_motion.x + GPS_STANDARD_X;//小车坐标系->大地坐标系
+	global_py = robot_motion.y + GPS_STANDARD_Y;
+	calcMotion2Location(global_px, global_py, &HUAWEI_status.latitude, &HUAWEI_status.longitude);//大地坐标系到椭球坐标系
+	memset(uart2rk3288.tdata, 0, sizeof(uart2rk3288.tdata));
+	sprintf(uart2rk3288.tdata, "$MOVETO,%0.12f,%0.10f,%0.10f,%0.4f,%0.4f*", \
+		HUAWEI_cmd.time, HUAWEI_status.longitude, HUAWEI_status.latitude, robot_motion.v, robot_motion.heading);
+	uart2rk3288.length = strlen(uart2rk3288.tdata);
+	uart2rk3288.sendno = 0;
+#ifdef ROBOT1				
+	USART1->CR1 |= (1 << 7);
+#endif			
+#ifdef ROBOT2		
+	USART6->CR1 |= (1 << 7);
+#endif				
+
+}
+
+void refreshHuaweiCmd(void)
+{
+	if (lineplan.flag_new_cmdframe_old == 1 && lineplan.flag_new_cmdframe == 0)
+	{
+		cmd.cmdstop = 1;
+	}
+	lineplan.flag_new_cmdframe_old = lineplan.flag_new_cmdframe;
+}
+
 void moveCtrlALGTask(void *pvPara)
 {
 	static portTickType xLastWakeTime;
@@ -94,36 +122,15 @@ void moveCtrlALGTask(void *pvPara)
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		is3288CmdLost(&lineplan.heart_beat_rx_rk3288, &lineplan.flag_new_cmdframe);
-		if (lineplan.flag_new_cmdframe_old == 1 && lineplan.flag_new_cmdframe == 0)
-		{
-			cmd.cmdstop = 1;
-		}
-		lineplan.flag_new_cmdframe_old = lineplan.flag_new_cmdframe;
-		global_px = -robot_motion.x + GPS_STANDARD_X;//小车坐标系->大地坐标系
-		global_py = robot_motion.y + GPS_STANDARD_Y;
-		OnButtonFansuan(global_px, global_py, &HUAWEI_status.latitude, &HUAWEI_status.longitude);//大地坐标系到椭球坐标系
-		memset(uart2rk3288.tdata, 0, sizeof(uart2rk3288.tdata));
-		sprintf(uart2rk3288.tdata, "$MOVETO,%0.12f,%0.10f,%0.10f,%0.4f,%0.4f*", \
-			HUAWEI_cmd.time, HUAWEI_status.longitude, HUAWEI_status.latitude, robot_motion.v, robot_motion.heading);
-		uart2rk3288.length = strlen(uart2rk3288.tdata);
-		uart2rk3288.sendno = 0;
-#ifdef ROBOT1				
-		USART1->CR1 |= (1 << 7);
-#endif			
-#ifdef ROBOT2		
-		USART6->CR1 |= (1 << 7);
-#endif				
-#if MPU6050
-		rxOMGMPU6050();
-#else
-		rd_omg_gyro();
-#endif			
-		parsePosition();
+		is3288CmdLost(&lineplan.heart_beat_rx_rk3288, &lineplan.flag_new_cmdframe);//检查华为信息心跳
+		refreshHuaweiCmd();//更新华为命令标志位
+		calcMsg2Huawei();//计算当前经纬度信息并发送到上位机
+		rxOMGMPU6050();//读取陀螺仪信息
+		parsePosition();//
 		checkRK3288Msg();//recive cmd
-		parseCMD();
-		excuteRK3288CMD();
-		speed2MotorCalc(control.target_v, control.target_omg);
+		parseCMD();//解析运动控制命令
+		excuteRK3288CMD();//计算目标控制速度
+		speed2MotorCalc(control.target_v, control.target_omg);//控制电机转速
 	}
 }
 

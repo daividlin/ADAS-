@@ -12,6 +12,8 @@
 void mainTask(void *pvPara);
 void checkBoardTask(void *pvPara);
 void checkHuaweiCmdTask(void *pvPara);
+void calcMsg2Huawei(void);
+void refreshHuaweiCmd(void);
 void moveCtrlALGTask(void *pvPara);
 void analysisGPSTask(void *pvPara);
 void debugUsartSendTask(void *pvPara);

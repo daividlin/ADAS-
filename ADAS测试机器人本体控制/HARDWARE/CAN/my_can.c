@@ -6,11 +6,14 @@
 BaseHalSt gHalData;
 
 #if CAN1_RX0_INT_ENABLE	//使能RX0中断
-/*
-函数功能：CAN1中断接收函数
-参数    ：无
-*/
 
+//************************************
+// 函数:    CAN1_RX0_IRQHandler
+// 返回值:   void
+// 描述:can接收到数据包触发接收中断
+// 参数列表: void
+//作者：LIN.HRG
+//************************************
 void CAN1_RX0_IRQHandler(void)
 {
 	unsigned char rxbuf[8];
@@ -50,6 +53,14 @@ unsigned char MOTECSetMotorSpd(unsigned char addr, int spd)//spd:rpm
 	return 0;
 }
 
+//************************************
+// 函数:    syntronMotorVeloSet
+// 返回值:   void
+// 描述:
+// 参数列表: u8 adr驱动器节点地址
+// 参数列表: int spd驱动器转速（RPM）
+//作者：LIN.HRG
+//************************************
 void syntronMotorVeloSet(u8 adr, int spd)
 {
 	CMD_SEND_DRIVER_UNION_TYPE cmd;
@@ -118,7 +129,6 @@ unsigned char send_cmd_motordrive(unsigned char addr, unsigned char cmd_id, unsi
 */
 
 
-
 unsigned char getMotorSpeed_MOTEC(unsigned char addr)//spd:rpm
 {
 	unsigned char buff[8];
@@ -138,6 +148,13 @@ unsigned char getMotorSpeed_MOTEC(unsigned char addr)//spd:rpm
 	return 0;
 }
 
+//************************************
+// 函数:    getMotorVelo
+// 返回值:   void
+// 描述:获取相应节点驱动器当前转速
+// 参数列表: u8 adr 节点地址
+//作者：LIN.HRG
+//************************************
 void getMotorVelo(u8 adr)
 {
 	CMD_SEND_DRIVER_UNION_TYPE cmd;
@@ -150,10 +167,6 @@ void getMotorVelo(u8 adr)
 	CAN1_Send_Msg(cmd.cmdByte, 8, addr);
 }
 
-/*
-函数功能：获取电机转速rpm
-参数    ：id  设备节点
-*/
 unsigned char EnableMotorDrive(unsigned char addr)//spd:rpm
 {
 	unsigned char buff[8];
@@ -217,7 +230,7 @@ unsigned char getWheelMotorSpeed2Buf(void)
 				  其他,初始化失败;
 */
 
-u8 CAN1_Mode_Init(u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode)
+u8 can1ModeConfig(u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode)
 {
 	u16 i = 0;
 	if (tsjw == 0 || tbs2 == 0 || tbs1 == 0 || brp == 0)return 1;

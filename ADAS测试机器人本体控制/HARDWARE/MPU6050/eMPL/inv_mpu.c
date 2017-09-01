@@ -2930,7 +2930,7 @@ void mget_ms(unsigned long *time)
 //mpu6050,dmp初始化
 //返回值:0,正常
 //    其他,失败
-u8 mpu_dmp_init(void)
+u8 mpuDmpInit(void)
 {
 	u8 res=0;
 	IIC_Init(); 		//初始化IIC总线

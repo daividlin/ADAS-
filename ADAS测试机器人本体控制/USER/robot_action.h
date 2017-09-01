@@ -83,6 +83,14 @@
 #define ERROR_INDEX_MOTOR 0
 #define ERROR_INDEX_OFFSET 1
 #define ERROR_LEVEL 1
+
+typedef struct _GYRO_VAL_STRUCT_TYPE
+{
+	short x;
+	short y;
+	short z;
+
+}GYRO_VAL_STRUCT_TYPE;
 //---------------------------------------------------
 //extern ROADPOS road_pos[50];
 
@@ -95,8 +103,8 @@ extern GYRO_STRUCT_TYPE gyro;
 extern float fittingR;
 extern float adjustr;
 
-extern UARTINT uart2rk3288;
-extern UARTINT uart2cmdboard;
+extern USART_SEND_STRUCT_TYPE uart2rk3288;
+extern USART_SEND_STRUCT_TYPE uart2cmdboard;
 extern ROBOTUART PC2STUsart;
 extern ROBOTUART dcm2stm_uart;
 
