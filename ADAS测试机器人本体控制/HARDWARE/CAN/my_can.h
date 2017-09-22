@@ -5,6 +5,7 @@
 #include "typeinclude.h"
 //电机控制相关参数
 #define SPD_SET_LEN           8
+
 #define MOTORDRIVE_ID_LEFT         0x01
 #define MOTORDRIVE_ID_RIGHT        0x02
 

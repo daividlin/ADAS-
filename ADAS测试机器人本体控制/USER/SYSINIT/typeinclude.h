@@ -192,7 +192,9 @@ typedef struct _USART_SEND_STRUCT_TYPE
 	int length;
 	int sendno;
 }USART_SEND_STRUCT_TYPE;
-
+/************************************************************************/
+/* 和利时定义                                                           */
+/************************************************************************/
 typedef enum _MOTOR_CAN_FUNCTION_CODE_ENUM_TYPE
 {
 	//错误功能码回复
