@@ -4,7 +4,7 @@
 extern TaskHandle_t mainTaskHandle;
 
 //************************************
-// 函数:    mainTask
+// 函数:    mainTask9
 // 返回值:   void
 // 描述:初始化外设，建立其他任务，删除本任务
 // 参数列表: void * pvPara
@@ -18,9 +18,11 @@ void mainTask(void *pvPara)
 	inputGPIOConfig();
 	can1ModeConfig(1, 6, 7, 6, 0);	//CAN初始化,波特率500Kbps 
 	vTaskDelay(2000);
+
 	mpuInit();
 	vTaskDelay(20);
 	mpuDmpInit();
+
 	initGPSData();
 	initGyroData();
 	motorInit();
@@ -81,7 +83,7 @@ void checkHuaweiCmdTask(void *pvPara)
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		rxHuaweiCmd();
+		rxHuaweiCmd(&HUAWEI_Cmd_buf);
 	}
 }
 

@@ -510,16 +510,16 @@ extern void analysisGPS(void)
 }
 
 
-extern char rxHuaweiCmd(void)
+extern char rxHuaweiCmd(GPS_REALBUF_STRUCT_TYPE * msg)
 {
 	char re = 0;
-	if (HUAWEI_Cmd_buf.dataarrive == 1)
+	if (msg->dataarrive == 1)
 	{
-		HUAWEI_Cmd_buf.dataarrive = 0;
+		msg->dataarrive = 0;
 		{
 			{
-				Creat_CMD_Index(HUAWEI_Cmd_buf.data);
-				Real_HUAWEI_Command_Process();
+				Creat_CMD_Index(msg->data);
+				Real_HUAWEI_Command_Process(msg);
 			}
 		}
 		re = 1;
@@ -527,17 +527,17 @@ extern char rxHuaweiCmd(void)
 	return re;
 }
 
-void Real_HUAWEI_Command_Process(void)
+void Real_HUAWEI_Command_Process(GPS_REALBUF_STRUCT_TYPE *msg)
 {
 	if (strstr(HUAWEI_Cmd_buf.data, "MOVETO"))//$GPGGA,112118.000,3743.5044,N,11540.5393,E,1,06,1.6,15.3,M,-9.1,M,,0000*7E
 	{
 		lineplan.heart_beat_rx_rk3288 = 0;
 		lineplan.flag_new_cmdframe = 1;
-		HUAWEI_cmd.time = myStod(Real_Process_DH_hw(HUAWEI_Cmd_buf.data, 1)); //?7??????????
-		HUAWEI_cmd.longitude = myStod(Real_Process_DH_hw(HUAWEI_Cmd_buf.data, 2));
-		HUAWEI_cmd.latitude = myStod(Real_Process_DH_hw(HUAWEI_Cmd_buf.data, 3));
-		HUAWEI_cmd.speed = myStod(Real_Process_DH_hw(HUAWEI_Cmd_buf.data, 4));
-		HUAWEI_cmd.heading = atof(Real_Process_DH_hw(HUAWEI_Cmd_buf.data, 5));
+		HUAWEI_cmd.time = myStod(Real_Process_DH_hw(msg->data, 1)); //?7??????????
+		HUAWEI_cmd.longitude = myStod(Real_Process_DH_hw(msg->data, 2));
+		HUAWEI_cmd.latitude = myStod(Real_Process_DH_hw(msg->data, 3));
+		HUAWEI_cmd.speed = myStod(Real_Process_DH_hw(msg->data, 4));
+		HUAWEI_cmd.heading = atof(Real_Process_DH_hw(msg->data, 5));
 		Gauss_projection(&lineplan.x, &lineplan.y, &gps.z, HUAWEI_cmd.latitude, HUAWEI_cmd.longitude);//椭球坐标系->大地平面坐标系
 		lineplan.x = -(lineplan.x - GPS_STANDARD_X);//大地平面坐标系->小车坐标系
 		lineplan.y = lineplan.y - GPS_STANDARD_Y;
